@@ -4,7 +4,7 @@ Gruppo: strcpy(group, "name");
 TODO:
 
 - [ ] PARTE 1
-	- [x] Creare matrice
+	- [ ] Creare matrice
 	- [ ] Liberare memoria
 	- [ ] Get/Set
 	- [ ] Init random
