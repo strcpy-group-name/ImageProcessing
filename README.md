@@ -11,7 +11,6 @@ TODO:
 	- [ ] Copia
 	- [ ] Concatenazione
 	- [ ] Subset
-
 	- [ ] Somma
 	- [ ] Sottrazione
 	- [ ] Moltiplicazione scalare
