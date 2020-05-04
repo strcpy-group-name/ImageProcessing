@@ -27,7 +27,7 @@ typedef struct
     unsigned int h; /* <- altezza */
     unsigned int k; /* <- canali */
     stats *stat;    /* <- statistiche per canale */
-    float ***data;  /* <- matrice 3D di valori float */
+    float *data;  /* <- matrice 3D di valori float */
 } ip_mat;
 
 /**** PARTE 1: TIPO DI DATI ip_mat E MEMORIA ****/

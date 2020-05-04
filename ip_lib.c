@@ -119,7 +119,12 @@ float get_normal_random()
 
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v);
 
-void ip_mat_free(ip_mat *a);
+void ip_mat_free(ip_mat *a)
+{
+    free(a->stat);
+	free(a->data);
+	free(a);
+}
 
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k);
 
