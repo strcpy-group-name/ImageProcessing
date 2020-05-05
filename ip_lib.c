@@ -131,12 +131,14 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat -> w = w;
     mat -> h = h;
     mat -> k = k;
-    mat->stat = NULL;
+    mat->stat = (stats *) malloc(sizeof(stats));
 
     mat->data = (float **)malloc(sizeof(float *)*h);
+    mat->data[0] = (float *)malloc(sizeof(float)*w*k);
 
     for(ih=0; ih<h; ih++){
-        mat->data[ih] = (float *)malloc(sizeof(float)*w*k);
+        if(ih!=0)
+            mat->data[ih] = mat->data[ih-1]+w*k;
         for(iw=0;iw<w;iw++)
             for(ik=0; ik<k; ik++)
                 set_val(mat, ih, iw, ik, v);
@@ -162,9 +164,7 @@ void print_ipmat(ip_mat *mat){
 
 void ip_mat_free(ip_mat *a)
 {
-    int i;
-    for(i = 0; i < a->h; i++)
-        free(a->data[i]);
+    free(a->data[0]);
     free(a->data);
     free(a->stat);
     free(a);
@@ -191,14 +191,15 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
     int w, h, k;
     int ih, iw, ik;
     /* x comodità */
-    h = row_end - row_start + 1;
-    w = col_end - col_start + 1;
+    h = row_end - row_start;
+    w = col_end - col_start;
     k = t->k;
 
     subset = (ip_mat *) malloc(sizeof(ip_mat));
     subset->h = h;
     subset->w = w;
     subset->k = k;
+    subset->stat = (stats *) malloc(sizeof(stats));
     subset->data = (float **)malloc (sizeof(float *)*h);
 
     subset->data[0] = (float *) malloc (sizeof(float)*w*k);

@@ -26,7 +26,7 @@ int main () {
     ip_mat_free(mat1);
 
     /* test subset*/
-     printf("test subset\n");
+    printf("test subset\n");
     ip_mat *mat2, *subset2; 
     int rows, cols, channels;
     int i, j, k;
@@ -46,10 +46,12 @@ int main () {
     subset2 = ip_mat_subset(mat2, 2,4,1,4);
     printf("\n");
     print_ipmat(subset2);
+    ip_mat_free(mat2);
+    ip_mat_free(subset2);
 
     /*test ip_mat_mean*/
-    ip_mat* a = ip_mat_create(2,2,3,6);
-    ip_mat* b = ip_mat_create(2,2,3,3);
+    ip_mat* a = ip_mat_create(2,2,3,6.0);
+    ip_mat* b = ip_mat_create(2,2,3,3.0);
 
     ip_mat* c = ip_mat_mean(a, b);
 
@@ -59,15 +61,15 @@ int main () {
     ip_mat_free(a);
     ip_mat_free(b);
     ip_mat_free(c);
-
+    
     /*test ip_mat_mul_scalar*/
-    ip_mat* d = ip_mat_create(2,2,3,10);
-    a = ip_mat_mul_scalar(d, 1.2f);
+    ip_mat* d = ip_mat_create(2,2,3,10.0);
+    ip_mat* a2 = ip_mat_mul_scalar(d, 1.2f);
 
     printf("\n");
-    print_ipmat(a);
+    print_ipmat(a2);
 
-    ip_mat_free(a);
+    ip_mat_free(a2);
     ip_mat_free(d);
 
     return 0;
