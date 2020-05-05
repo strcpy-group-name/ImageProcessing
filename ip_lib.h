@@ -92,6 +92,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione);
  * es: 3x2x3
  * 0.00 0.00 0.00  0.00 0.00 0.00
  * 0.00 0.00 0.00  0.00 0.00 0.00
+ * 0.00 0.00 0.00  0.00 0.00 0.00
 */
 void print_ipmat(ip_mat *mat);
 

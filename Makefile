@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS= --ansi --pedantic -Wall -lm -g3 -O3 -fsanitize=address -fsanitize=undefined -std=gnu89 -Wextra
-LIBFLAGS= -Wall
+CFLAGS= --ansi --pedantic -Wall -lm -g3 -O3 -fsanitize=address -fsanitize=undefined -std=gnu89 -Wextra -ggdb -g
+LIBFLAGS= -Wall -ggdb -g
 
 test_ipmat: test_ipmat.o ip_lib.o ip_lib.h bmp.o bmp.h
 	$(CC) test_ipmat.o ip_lib.o bmp.o $(CFLAGS) -o$@
@@ -25,5 +25,5 @@ clean:
 		@rm -f main.o
 		@rm -f bmp.o
 		@rm -f test_ipmat
-		@rm -f test_ipmat.O
+		@rm -f test_ipmat.o
 		@rm -f ip_lib.o
