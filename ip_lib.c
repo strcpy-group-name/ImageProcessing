@@ -90,7 +90,9 @@ float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (i < a->h && j < a->w && k < a->k)
     { /* j>=0 and k>=0 and i>=0 is non sense*/
-        return a->data[i][j*k+k];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        int n_channels;
+        n_channels = a->k;
+        return a->data[i][j*n_channels+k];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
     }
     else
     {
@@ -103,7 +105,9 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 {
     if (i < a->h && j < a->w && k < a->k)
     {
-        a->data[i][j*k+k] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        int n_channels;
+        n_channels = a->k;
+        a->data[i][j*n_channels+k] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
     }
     else
     {
