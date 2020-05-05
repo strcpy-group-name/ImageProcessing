@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "ip_lib.h"
 #include "bmp.h"
+#include <math.h>
 
 void ip_mat_show(ip_mat *t)
 {
@@ -133,11 +134,9 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat->stat = NULL;
     
     mat->data = (float **)malloc(sizeof(float *)*h);
-    mat->data[0] = (float *)malloc(sizeof(float)*w*k);
 
     for(ih=0; ih<h; ih++){
-        if(ih!=0)
-            mat->data[ih] =  mat->data[ih-1] + w*k;
+        mat->data[ih] = (float *)malloc(sizeof(float)*w*k);
         for(iw=0;iw<w;iw++)
             for(ik=0; ik<k; ik++)
                 set_val(mat, ih, iw, ik, v);
@@ -160,6 +159,36 @@ void print_ipmat(ip_mat *mat){
     }
 
 }
+
+void ip_mat_free(ip_mat *a)
+{
+		int i;
+		for(i = 0; i < a->h; ++i)
+		{
+				free(a->data[i]);
+		}
+		free(a->data);
+		free(a->stat);
+		free(a);
+}
+
+void ip_mat_init_random(ip_mat *t, float mean, float var)
+{
+		int ih,iw,ik;
+
+    for(ih=0; ih<t->h; ih++){
+        for(iw=0;iw<t->w;iw++)
+            for(ik=0; ik<t->k; ik++)
+						{
+								float random = get_normal_random();
+								float gaussian = (1/sqrt(2*PI*var*var)) * pow(E, -(((random-mean)*(random-mean))/(2*var*var)));
+								set_val(t, ih, iw, ik, gaussian);
+						}
+    }
+
+}
+
+
 /* --- Function implemented by our group --- */
 
 /*
