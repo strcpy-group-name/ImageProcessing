@@ -25,6 +25,8 @@ void ip_mat_show(ip_mat *t)
     }
 }
 
+/* DA IMPLEMENTARE O DÀ ERRORE */
+/*
 void ip_mat_show_stats(ip_mat *t)
 {
     unsigned int k;
@@ -39,6 +41,7 @@ void ip_mat_show_stats(ip_mat *t)
         printf("\t Mean: %f\n", t->stat[k].mean);
     }
 }
+*/
 
 ip_mat *bitmap_to_ip_mat(Bitmap *img)
 {
@@ -109,39 +112,53 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     }
 }
 
-ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
-    ip_mat *mat;
-    int ih, iw, ik;
-    mat = (ip_mat *)malloc(sizeof(struct ip_mat));
-    mat -> w = w;
-    mat -> h = h;
-    mat -> k = k;
-    mat->stats = NULL;
-    
-    mat->data = (double **)malloc(sizeof(double *)*h);
-    mat->data[0] = (double **)malloc(sizeof(double *)*w*k);
-
-    for(ih=0; ih<h; ih++){
-        if(ih!=0)
-            mat->data[ih] =  mat->data[ih-1] + w*k;
-        for(iw=0;iw<w;iw++){
-            for(ik=0; ik<k; ik++)
-                set_val(mat, ih, iw, ik, v);
-        }
-    }
-    return mat;
-
-
-}
-
 float get_normal_random()
 {
     float y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
     float y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
     return cos(2 * PI * y2) * sqrt(-2. * log(y1));
 }
+
+ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
+    ip_mat *mat;
+    int ih, iw, ik;
+    mat = (ip_mat *)malloc(sizeof(ip_mat));
+    mat -> w = w;
+    mat -> h = h;
+    mat -> k = k;
+    mat->stat = NULL;
+    
+    mat->data = (float **)malloc(sizeof(float *)*h);
+    mat->data[0] = (float *)malloc(sizeof(float)*w*k);
+
+    for(ih=0; ih<h; ih++){
+        if(ih!=0)
+            mat->data[ih] =  mat->data[ih-1] + w*k;
+        for(iw=0;iw<w;iw++)
+            for(ik=0; ik<k; ik++)
+                set_val(mat, ih, iw, ik, v);
+    }
+    return mat;
+}
+
+void print_ipmat(ip_mat *mat){
+    int h = mat->h;
+    int w = mat->w;
+    int k = mat->k;
+    int ih, iw, ik;
+    for(ih = 0; ih<h; ih++){
+        for(iw=0;iw<w;iw++){
+            printf(" ");
+            for(ik=0; ik<k; ik++)
+                printf("%f ", get_val(mat, ih, iw, ik));
+        }
+        printf("\n");
+    }
+
+}
 /* --- Function implemented by our group --- */
 
+/*
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v);
 
 void ip_mat_free(ip_mat *a);
@@ -195,3 +212,4 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma);
 void rescale(ip_mat *t, float new_max);
 
 void clamp(ip_mat *t, float low, float high);
+*/
