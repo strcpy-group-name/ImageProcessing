@@ -30,7 +30,7 @@ int main () {
 		ip_mat* a = ip_mat_create(2,2,3,6);
 		ip_mat* b = ip_mat_create(2,2,3,3);
 
-		ip_mat *c = ip_mat_mean(a, b);
+		ip_mat* c = ip_mat_mean(a, b);
 
 		printf("\n");
 		print_ipmat(c);
