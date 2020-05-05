@@ -50,27 +50,26 @@ int main () {
     ip_mat_free(subset2);
 
     /*test ip_mat_mean*/
-    ip_mat* a = ip_mat_create(2,2,3,6.0);
-    ip_mat* b = ip_mat_create(2,2,3,3.0);
+    ip_mat* a = ip_mat_create(2,2,3,6.0f);
+    ip_mat* b = ip_mat_create(2,2,3,3.0f);
 
-    ip_mat* c = ip_mat_mean(a, b);
+    ip_mat *c = ip_mat_mean(a, b);
 
     printf("\n");
     print_ipmat(c);
-
+    
     ip_mat_free(a);
     ip_mat_free(b);
     ip_mat_free(c);
-    
-    /*test ip_mat_mul_scalar*/
-    ip_mat* d = ip_mat_create(2,2,3,10.0);
-    ip_mat* a2 = ip_mat_mul_scalar(d, 1.2f);
+
+    ip_mat *d = ip_mat_create(2, 2, 3, 3.0f);
+    ip_mat *e = ip_mat_mul_scalar(d, 3.0f);
 
     printf("\n");
-    print_ipmat(a2);
+    print_ipmat(e);
 
-    ip_mat_free(a2);
     ip_mat_free(d);
+    ip_mat_free(e);
 
     return 0;
 }
