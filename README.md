@@ -4,10 +4,10 @@ Gruppo: strcpy(group, "name");
 TODO:
 
 - [ ] PARTE 1
-	- [ ] Creare matrice
-	- [ ] Liberare memoria
-	- [ ] Get/Set
-	- [ ] Init random
+	- [X] Creare matrice
+	- [X] Liberare memoria
+	- [X] Get/Set
+	- [X] Init random
 	- [ ] Copia
 	- [ ] Concatenazione
 	- [ ] Subset
