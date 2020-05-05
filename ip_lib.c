@@ -136,7 +136,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat->data = (float **)malloc(sizeof(float *)*h);
 
     for(ih=0; ih<h; ih++){
-        mat->data[ih] = (float *)malloc(sizeof(float)*w*k);
+    		mat->data[ih] = (float *)malloc(sizeof(float)*w*k);
         for(iw=0;iw<w;iw++)
             for(ik=0; ik<k; ik++)
                 set_val(mat, ih, iw, ik, v);
@@ -163,10 +163,8 @@ void print_ipmat(ip_mat *mat){
 void ip_mat_free(ip_mat *a)
 {
 		int i;
-		for(i = 0; i < a->h; ++i)
-		{
-				free(a->data[i]);
-		}
+		for(i = 0; i < a->h; i++)
+			free(a->data[i]);
 		free(a->data);
 		free(a->stat);
 		free(a);
@@ -188,6 +186,45 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
 
 }
 
+ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
+{
+		int ih,iw,ik;
+
+		/*TODO: in caso di matrici di dimensione diversa, estendere la matrice più piccola usando concat*/
+		if(a->h == b->h && a->w == b->w && a->k == b->k)
+		{
+				ip_mat* c = ip_mat_create(a->h, a->w, a->k, 0);
+
+				for(ih=0; ih<a->h; ih++){
+						for(iw=0;iw<a->w;iw++)
+								for(ik=0; ik<a->k; ik++)
+								{
+										float v_a = get_val(a, ih, iw, ik);
+										float v_b = get_val(b, ih, iw, ik);
+										set_val(c, ih, iw, ik, (v_a+v_b)/2);
+								}
+				}
+				return c;
+		}
+		else
+				return NULL;
+}
+
+ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
+{
+		int ih, iw, ik;
+		ip_mat* mat = ip_mat_create(a->h, a->w, a->k, 0);
+
+		for(ih=0; ih<a->h; ih++){
+				for(iw=0;iw<a->w;iw++)
+						for(ik=0; ik<a->k; ik++)
+						{
+								float v_a = get_val(a, ih, iw, ik);
+								set_val(mat, ih, iw, ik, v_a * c);
+						}
+		}
+		return mat;
+}
 
 /* --- Function implemented by our group --- */
 
