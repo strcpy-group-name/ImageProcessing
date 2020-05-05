@@ -87,7 +87,7 @@ float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (i < a->h && j < a->w && k < a->k)
     { /* j>=0 and k>=0 and i>=0 is non sense*/
-        return a->data[i][j][k];
+        return a->data[i][j*k+k];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
     }
     else
     {
@@ -100,13 +100,38 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 {
     if (i < a->h && j < a->w && k < a->k)
     {
-        a->data[i][j][k] = v;
+        a->data[i][j*k+k] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
     }
     else
     {
         printf("Errore set_val!!!");
         exit(1);
     }
+}
+
+ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
+    ip_mat *mat;
+    int ih, iw, ik;
+    mat = (ip_mat *)malloc(sizeof(struct ip_mat));
+    mat -> w = w;
+    mat -> h = h;
+    mat -> k = k;
+    mat->stats = NULL;
+    
+    mat->data = (double **)malloc(sizeof(double *)*h);
+    mat->data[0] = (double **)malloc(sizeof(double *)*w*k);
+
+    for(ih=0; ih<h; ih++){
+        if(ih!=0)
+            mat->data[ih] =  mat->data[ih-1] + w*k;
+        for(iw=0;iw<w;iw++){
+            for(ik=0; ik<k; ik++)
+                set_val(mat, ih, iw, ik, v);
+        }
+    }
+    return mat;
+
+
 }
 
 float get_normal_random()
