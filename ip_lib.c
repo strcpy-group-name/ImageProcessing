@@ -186,6 +186,34 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
 
 }
 
+ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){
+    ip_mat *subset;
+    int w, h, k;
+    int ih, iw, ik;
+    /* x comodità */
+    h = row_end - row_start + 1;
+    w = col_end - col_start + 1;
+    k = t->k;
+
+    subset = (ip_mat *) malloc(sizeof(ip_mat));
+    subset->h = h;
+    subset->w = w;
+    subset->k = k;
+    subset->data = (float **)malloc (sizeof(float *)*h);
+
+    subset->data[0] = (float *) malloc (sizeof(float)*w*k);
+
+    for(ih = 0; ih < h; ih++){
+        if(ih != 0)
+            subset->data[ih] = subset->data[ih-1]+w*k;
+        for(iw = 0; iw < w; iw++)
+            for(ik = 0; ik < k; ik++)
+                set_val(subset, ih, iw, ik, t->data[row_start+ih][(col_start+iw)*k+ik]);
+    }
+
+    return subset;
+}
+
 ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 {
     int ih,iw,ik;
