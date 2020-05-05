@@ -1,4 +1,4 @@
 *.bmp
 *.sh
 *.o
-test_ipmat.c
+*.out
