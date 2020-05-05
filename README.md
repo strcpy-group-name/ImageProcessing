@@ -13,9 +13,9 @@ TODO:
 	- [ ] Subset
 	- [ ] Somma
 	- [ ] Sottrazione
-	- [ ] Moltiplicazione scalare
+	- [X] Moltiplicazione scalare
 	- [ ] Addizione scalare
-	- [ ] Media
+	- [X] Media
 	- [ ] Statistiche
 
 - [ ] PARTE 2
