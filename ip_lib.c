@@ -145,7 +145,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     return mat;
 }
 
-void print_ipmat(ip_mat *mat){
+void ip_mat_print(ip_mat *mat){
     int h = mat->h;
     int w = mat->w;
     int k = mat->k;
@@ -201,6 +201,44 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
             }
     }
     return subset;
+}
+
+ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b){
+    if(a->h == b->h && a->w == b->w && a->k == b->k){
+        ip_mat *c;
+        int ih, iw, ik;
+
+        c = ip_mat_create(a->h, a->w, a->k, 0);
+
+        for(ih = 0; ih < c->h; ih++)
+            for(iw = 0; iw < c->w; iw++)
+                for(ik = 0; ik < c->k; ik++){
+                    float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
+                    set_val(c, ih, iw, ik, sum);
+                }
+        return c;
+    }
+    else
+        return NULL;
+}
+
+ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b){
+    if(a->h == b->h && a->w == b->w && a->k == b->k){
+        ip_mat *c;
+        int ih, iw, ik;
+
+        c = ip_mat_create(a->h, a->w, a->k, 0);
+
+        for(ih = 0; ih < c->h; ih++)
+            for(iw = 0; iw < c->w; iw++)
+                for(ik = 0; ik < c->k; ik++){
+                    float sum = get_val(a, ih, iw, ik) - get_val(b, ih, iw, ik);
+                    set_val(c, ih, iw, ik, sum);
+                }
+        return c;
+    }
+    else
+        return NULL;
 }
 
 ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
