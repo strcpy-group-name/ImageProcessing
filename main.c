@@ -28,7 +28,7 @@ int main () {
     set_val(mat1, 0,0,0,3);
     set_val(mat1, 3,4,2,7);
     printf("\n Matrice A modificata con set: \n");
-    ip_mat_print(mat1);
+    ip_mat_show(mat1);
 
     /*test get_val*/
     printf("\n TEST get_val \n");
@@ -39,7 +39,7 @@ int main () {
     ip_mat_init_random(mat1, 1, 1);
 
     printf("\n");
-    ip_mat_print(mat1);
+    ip_mat_show(mat1);
 
     /*test ip_mat_free*/
     printf("\n TEST ip_mat_free \n");
@@ -60,11 +60,11 @@ int main () {
                 set_val(mat2,ih,iw,ik,acc);
 
     printf("\n Matrice A: \n");
-    ip_mat_print(mat2);
+    ip_mat_show(mat2);
 
     subset = ip_mat_subset(mat2, 2,4,1,4);
     printf("\n Matrice subset di A: \n");
-    ip_mat_print(subset);
+    ip_mat_show(subset);
 
     ip_mat_free(mat2);
     ip_mat_free(subset);
@@ -82,13 +82,13 @@ int main () {
     sum = ip_mat_sum(add1, add2);
     
     printf("\n A: \n");
-    ip_mat_print(add1);
+    ip_mat_show(add1);
 
     printf("\n B: \n");
-    ip_mat_print(add2);
+    ip_mat_show(add2);
 
     printf("\n A + B: \n");
-    ip_mat_print(sum);
+    ip_mat_show(sum);
     printf("\n");
     ip_mat_free(sum);
 
@@ -100,7 +100,7 @@ int main () {
 
     
     printf("\n A - B: \n");
-    ip_mat_print(sub);
+    ip_mat_show(sub);
     printf("\n");
    
     ip_mat_free(sub);
@@ -115,11 +115,11 @@ int main () {
     ip_mat *c = ip_mat_mean(a, b);
 
     printf("\n Matrice A:\n");
-    ip_mat_print(a);
+    ip_mat_show(a);
     printf("\n Matrice B:\n");
-    ip_mat_print(b);
+    ip_mat_show(b);
     printf("\n Media di A e B\n");
-    ip_mat_print(c);
+    ip_mat_show(c);
     
     ip_mat_free(a);
     ip_mat_free(b);
@@ -131,12 +131,23 @@ int main () {
     ip_mat *e = ip_mat_mul_scalar(d, 3.0f);
 
     printf("\n Matrice A: \n");
-    ip_mat_print(d);
+    ip_mat_show(d);
     printf("\n A x 3:\n");
-    ip_mat_print(e);
+    ip_mat_show(e);
 
     ip_mat_free(d);
     ip_mat_free(e);
+
+    /*test bmp*/
+    Bitmap *image = bm_load("image.bmp");
+    ip_mat *img = bitmap_to_ip_mat(image);
+    ip_mat *bright = ip_mat_brighten(img, -100.0f);
+    Bitmap *bbmp = ip_mat_to_bitmap(bright);
+    bm_save(bbmp, "test2.bmp");
+    bm_free(image);
+    bm_free(bbmp);
+    ip_mat_free(bright);
+    ip_mat_free(img);
 
     return 0;
 }

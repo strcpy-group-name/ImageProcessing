@@ -87,15 +87,6 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
  * */
 ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione);
 
-/*** FUNZIONI EXTRA ***/
-/* Stampa la matrice ip_mat righe x colonne con ciascuna colonna splittata in k canali:
- * es: 3x2x3
- * 0.00 0.00 0.00  0.00 0.00 0.00
- * 0.00 0.00 0.00  0.00 0.00 0.00
- * 0.00 0.00 0.00  0.00 0.00 0.00
-*/
-void ip_mat_print(ip_mat *mat);
-
 /**** PARTE 1: OPERAZIONI MATEMATICHE FRA IP_MAT ****/
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */

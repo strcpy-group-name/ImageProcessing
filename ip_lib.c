@@ -149,21 +149,6 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     return mat;
 }
 
-void ip_mat_print(ip_mat *mat){
-    int h = mat->h;
-    int w = mat->w;
-    int k = mat->k;
-    int ih, iw, ik;
-    for(ih = 0; ih<h; ih++){
-        for(iw=0;iw<w;iw++){
-            printf(" ");
-            for(ik=0; ik<k; ik++)
-                printf("%f ", get_val(mat, ih, iw, ik));
-        }
-        printf("\n");
-    }
-}
-
 void ip_mat_free(ip_mat *a)
 {
     free(a->data[0]);
@@ -298,6 +283,50 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
     }
     else
         return NULL;
+}
+
+ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
+{
+    if(a)
+    {
+        int ih, iw, ik;
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik);
+                    set_val(mat, ih, iw, ik, v_a + c);
+                }
+        }
+        return mat;
+    }
+    else
+        return NULL;
+}
+
+void ip_mat_adjust_to_rgb(ip_mat *a)
+{
+    int ih, iw, ik;
+    for (ih = 0; ih < a->h; ih++)
+    {
+        for (iw = 0; iw < a->w; iw++)
+            for (ik = 0; ik < a->k; ik++)
+            {
+                float v_a = get_val(a, ih, iw, ik);
+                if(v_a > 255) v_a = 255;
+                if(v_a < 0) v_a = 0;
+                set_val(a, ih, iw, ik, v_a);
+            }
+    }
+}
+ip_mat *ip_mat_brighten(ip_mat *a, float bright)
+{
+    ip_mat *mat = ip_mat_add_scalar(a, bright); 
+    ip_mat_adjust_to_rgb(mat);
+    return mat;
 }
 
 /* --- Function implemented by our group --- */
