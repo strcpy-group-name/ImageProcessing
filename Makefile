@@ -14,9 +14,6 @@ bmp.o: bmp.c bmp.h
 ip_lib.o: ip_lib.c ip_lib.h
 	$(CC) ip_lib.c $(LIBFLAGS) -c -o$@
 
-memory-check:
-	@valgrind -v --leak-check=full --show-leak-kinds=all ./main.out
-
 clean:
 		@rm -f bmp.o
 		@rm -f main
