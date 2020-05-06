@@ -15,9 +15,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: make
       run: make
+    - name: executing tests
+      run: ./main.out
     - name: installing valgrind
       run: sudo apt install -y valgrind
     - name: check leaks
       run: |
-          valgrind -v --leak-check=full --error-exitcode=2 ./main.out 2> dump.log
-          cat dump.log
+          valgrind -v --leak-check=full --error-exitcode=0 ./main.out
