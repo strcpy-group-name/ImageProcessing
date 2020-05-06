@@ -18,4 +18,4 @@ jobs:
     - name: installing valgrind
       run: sudo apt install -y valgrind
     - name: checking memory
-      run: valgrind -v --leak-check=full ./main.out
+      run: make memory-check
