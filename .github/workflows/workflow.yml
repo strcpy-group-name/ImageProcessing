@@ -21,4 +21,4 @@ jobs:
       run: sudo apt install -y valgrind
     - name: check leaks
       run: |
-          valgrind -q --leak-check=full --error-exitcode=10 ./main.out
+          valgrind -q --leak-check=full --suppressions=t.supp --error-exitcode=10 ./main.out
