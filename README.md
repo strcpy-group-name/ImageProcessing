@@ -10,7 +10,7 @@ TODO:
 	- [X] Init random
 	- [ ] Copia
 	- [ ] Concatenazione
-	- [ ] Subset
+	- [X] Subset
 	- [ ] Somma
 	- [ ] Sottrazione
 	- [X] Moltiplicazione scalare

@@ -131,12 +131,13 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat -> w = w;
     mat -> h = h;
     mat -> k = k;
-    mat->stat = NULL;
-
+    mat->stat = (stats *) malloc(sizeof(stats));
     mat->data = (float **)malloc(sizeof(float *)*h);
+    mat->data[0] = (float *)malloc(sizeof(float)*w*k*h);
 
     for(ih=0; ih<h; ih++){
-        mat->data[ih] = (float *)malloc(sizeof(float)*w*k);
+        if(ih!=0)
+            mat->data[ih] = mat->data[ih-1]+w*k;
         for(iw=0;iw<w;iw++)
             for(ik=0; ik<k; ik++)
                 set_val(mat, ih, iw, ik, v);
@@ -157,14 +158,11 @@ void print_ipmat(ip_mat *mat){
         }
         printf("\n");
     }
-
 }
 
 void ip_mat_free(ip_mat *a)
 {
-    int i;
-    for(i = 0; i < a->h; i++)
-        free(a->data[i]);
+    free(a->data[0]);
     free(a->data);
     free(a->stat);
     free(a);
@@ -183,21 +181,38 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
                 set_val(t, ih, iw, ik, gaussian);
             }
     }
+}
 
+ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){
+    ip_mat *subset;
+    int w, h, k;
+    int ih, iw, ik;
+    /* x comodità */
+    h = row_end - row_start;
+    w = col_end - col_start;
+    k = t->k;
+    subset = ip_mat_create(h, w, k, 0);
+    for(ih = 0; ih < h; ih++){
+        for(iw = 0; iw < w; iw++)
+            for(ik = 0; ik < k; ik++)
+            {
+                float val = get_val(t, row_start+ih, col_start+iw, ik);
+                set_val(subset, ih, iw, ik, val);
+            }
+    }
+    return subset;
 }
 
 ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 {
-    int ih,iw,ik;
-
     /*TODO: in caso di matrici di dimensione diversa, estendere la matrice più piccola usando concat*/
     if(a->h == b->h && a->w == b->w && a->k == b->k)
     {
-        ip_mat* c = ip_mat_create(a->h, a->w, a->k, 0);
-
-        for(ih=0; ih<a->h; ih++){
-            for(iw=0;iw<a->w;iw++)
-                for(ik=0; ik<a->k; ik++)
+        int ih, iw, ik;
+        ip_mat *c = ip_mat_create(a->h, a->w, a->k, 0);
+        for(ih=0; ih<c->h; ih++){
+            for(iw=0;iw<c->w;iw++)
+                for(ik=0; ik < c->k; ik++)
                 {
                     float v_a = get_val(a, ih, iw, ik);
                     float v_b = get_val(b, ih, iw, ik);
@@ -213,7 +228,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
 {
     int ih, iw, ik;
-    ip_mat* mat = ip_mat_create(a->h, a->w, a->k, 0);
+    ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
 
     for(ih=0; ih<a->h; ih++){
         for(iw=0;iw<a->w;iw++)
