@@ -16,12 +16,12 @@ TODO:
 	- [X] Somma
 	- [X] Sottrazione
 	- [X] Moltiplicazione scalare
-	- [ ] Addizione scalare
+	- [X] Addizione scalare
 	- [X] Media
 	- [ ] Statistiche
 
 - [ ] PARTE 2
-	- [ ] Luminosità
+	- [X] Luminosità
 	- [ ] Scala di grigi
 	- [ ] Rumore
 	- [ ] Blending
