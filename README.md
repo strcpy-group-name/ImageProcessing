@@ -1,9 +1,5 @@
 # ImageProcessing
 
-## Stato
-
-![C/C++ CI](https://github.com/strcpy-group-name/ImageProcessing/workflows/C/C++%20CI/badge.svg?branch=master)
-
 ## Gruppo
 Gruppo: strcpy(group, "name");
 

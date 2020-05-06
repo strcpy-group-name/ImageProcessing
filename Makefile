@@ -16,6 +16,6 @@ ip_lib.o: ip_lib.c ip_lib.h
 
 clean:
 		@rm -f bmp.o
-		@rm -f main
+		@rm -f main.out
 		@rm -f main.o
 		@rm -f ip_lib.o
