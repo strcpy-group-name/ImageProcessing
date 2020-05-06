@@ -17,5 +17,7 @@ jobs:
       run: make
     - name: installing valgrind
       run: sudo apt install -y valgrind
-    - name: checking memory
-      run: make memory-check
+    - name: check leaks
+      run: |
+          valgrind -v --leak-check=full --error-exitcode=2 ./main.out 2> dump.log
+          cat dump.log
