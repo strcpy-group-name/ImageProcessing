@@ -34,6 +34,7 @@ TODO:
 		- [ ] Emboss
 		- [ ] Average
 		- [ ] Gaussian
-	- [ ] Normalizzazione
-		- [ ] Rescale
-		- [ ] Clamp
+	- [X] Normalizzazione
+		- [X] Rescale
+		- [X] Clamp
+		- [X] Padding

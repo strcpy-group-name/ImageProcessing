@@ -139,7 +139,7 @@ int main () {
     ip_mat_free(e);
 
     /*
-    printf("\nTest ip_mat_brighten\n");
+    printf("\n TEST ip_mat_brighten: \n");
     Bitmap *image = bm_load("image.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
     ip_mat *bright = ip_mat_brighten(img, -100.0f);
@@ -150,7 +150,7 @@ int main () {
     ip_mat_free(bright);
     ip_mat_free(img);
     
-    printf("\ntest ip_mat_blend\n");
+    printf("\n TEST ip_mat_blend: \n");
     Bitmap *im1 = bm_load("image.bmp");
     Bitmap *im2 = bm_load("fiori.bmp");
     ip_mat *b1 = bitmap_to_ip_mat(im1);
@@ -165,6 +165,29 @@ int main () {
     bm_free(im2);
     bm_free(b3);
     */
+    
+    printf("\n TEST ip_mat_padding: \n");
+    ip_mat *no_pad = ip_mat_create(3,3,1,1.0f);
+    ip_mat *pad = ip_mat_padding(no_pad, 2, 2);
+
+    ip_mat_show(no_pad);
+    ip_mat_show(pad);
+
+    ip_mat_free(no_pad);
+    ip_mat_free(pad);
+
+    
+    printf("\n TEST ip_mat_padding image: \n");
+    Bitmap *caf = bm_load("caf.bmp");
+    ip_mat *caf_nopad = bitmap_to_ip_mat(caf);
+    ip_mat *caf_pad = ip_mat_padding(caf_nopad, 100, 100);
+    Bitmap *bbmp = ip_mat_to_bitmap(caf_pad);
+    bm_save(bbmp, "caf_padded.bmp");
+    bm_free(caf);
+    bm_free(bbmp);
+    ip_mat_free(caf_nopad);
+    ip_mat_free(caf_pad);
+    
     
 
     return 0;

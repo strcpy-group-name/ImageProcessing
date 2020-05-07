@@ -112,7 +112,8 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     }
     else
     {
-        printf("Errore set_val!!!");
+        printf("Errore set_val!!!\n");
+        printf("%d %d %d\n", i, j, k);
         exit(1);
     }
 }
@@ -307,44 +308,15 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
         return NULL;
 }
 
-void ip_mat_adjust_to_rgb(ip_mat *a)
-{
-    int ih, iw, ik;
-    for (ih = 0; ih < a->h; ih++)
-    {
-        for (iw = 0; iw < a->w; iw++)
-            for (ik = 0; ik < a->k; ik++)
-            {
-                float v_a = get_val(a, ih, iw, ik);
-                if(v_a > 255) v_a = 255;
-                if(v_a < 0) v_a = 0;
-                set_val(a, ih, iw, ik, v_a);
-            }
-    }
-}
+/**** PARTE 2 ****/
+
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     ip_mat *mat = ip_mat_add_scalar(a, bright);
-    ip_mat_adjust_to_rgb(mat); 
+    clamp(mat, 0, 255); 
     return mat;
 }
 
-void expand(ip_mat *a)
-{
-    if(a)
-    {
-        int ih, iw, ik;
-        for (ih = 0; ih < a->h; ih++)
-        {
-            for (iw = 0; iw < a->w; iw++)
-                for (ik = 0; ik < a->k; ik++)
-                {
-                    float v_a = get_val(a, ih, iw, ik) * 255.0f;
-                    set_val(a, ih, iw, ik, v_a);
-                }
-        }
-    }
-}
 
 ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 {
@@ -355,10 +327,67 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
         ip_mat *mat = ip_mat_sum(m_a, m_b);
         ip_mat_free(m_a);
         ip_mat_free(m_b);
-        expand(mat);
+        rescale(mat, 255.0f);
         return mat;
     }
     return NULL;
+}
+
+/**** PARTE 3 ****/
+
+ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
+{
+    if(a)
+    {
+        ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
+
+        int ih, iw, ik;
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik);
+                    set_val(nuova, ih+pad_h, iw+pad_w, ik, v_a);
+                }
+        }
+        return nuova;
+    }
+    else
+        return NULL;
+}
+
+void clamp(ip_mat *t, float low, float high)
+{
+    int ih, iw, ik;
+    for (ih = 0; ih < t->h; ih++)
+    {
+        for (iw = 0; iw < t->w; iw++)
+            for (ik = 0; ik < t->k; ik++)
+            {
+                float v_a = get_val(t, ih, iw, ik);
+                if(v_a > high) v_a = high;
+                if(v_a < low) v_a = low;
+                set_val(t, ih, iw, ik, v_a);
+            }
+    }
+}
+
+void rescale(ip_mat *t, float new_max)
+{
+    if(t)
+    {
+        int ih, iw, ik;
+        for (ih = 0; ih < t->h; ih++)
+        {
+            for (iw = 0; iw < t->w; iw++)
+                for (ik = 0; ik < t->k; ik++)
+                {
+                    float v_a = get_val(t, ih, iw, ik) * new_max;
+                    set_val(t, ih, iw, ik, v_a);
+                }
+        }
+    }
 }
 
 /* --- Function implemented by our group --- */
