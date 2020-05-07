@@ -129,6 +129,11 @@ ip_mat *ip_mat_brighten(ip_mat *a, float bright);
  * */
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount);
 
+/*** FUNIONI NOSTRE EXTRA ***/
+/* Scala di grigi con correzione luminosità */
+ip_mat * ip_mat_to_gray_scale_lum_corr(ip_mat *in);
+/* Scala di grigi con correzione gamma */
+ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
 
 /* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".

@@ -123,6 +123,7 @@ float get_normal_random()
     float y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
     return cos(2 * PI * y2) * sqrt(-2. * log(y1));
 }
+/* PARTE 1 */
 
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     ip_mat *mat;
@@ -307,6 +308,8 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
         return NULL;
 }
 
+/* PARTE 2 */
+
 void ip_mat_adjust_to_rgb(ip_mat *a)
 {
     int ih, iw, ik;
@@ -322,6 +325,7 @@ void ip_mat_adjust_to_rgb(ip_mat *a)
             }
     }
 }
+
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     ip_mat *mat = ip_mat_add_scalar(a, bright);
@@ -361,6 +365,68 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
     return NULL;
 }
 
+
+ip_mat *ip_mat_to_gray_scale(ip_mat *in){
+    int ih, iw, ik;
+    
+    float val, acc;
+    ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
+    for(ih=0; ih<(in->h); ih++)
+        for(iw=0; iw<(in->w); iw++){
+            
+            for(ik=0, acc=0; ik<in->k; ik++){
+                acc += get_val(in, ih, iw, ik);
+            }
+            val = acc/3;
+            for(ik=0; ik<in->k; ik++)
+                set_val(gray, ih, iw, ik, val);
+        }
+    return gray;
+}
+
+ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in){
+    int ih, iw, ik;  
+    float r, g, b, val;
+
+    ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
+    for(ih=0; ih<(in->h); ih++)
+        for(iw=0; iw<(in->w); iw++){
+            r = get_val(in, ih, iw, 0);
+            g = get_val(in, ih, iw, 1);
+            b = get_val(in, ih, iw, 2);
+            val = 0.3*r + 0.59*g + 0.11*b;
+            for(ik=0; ik<in->k; ik++)
+                set_val(gray, ih, iw, ik, val);
+        }
+    return gray;
+}
+
+
+float gamma_correction_exp_to_linear(float v){
+    float c_srgb, c_linear;
+    c_srgb = v/255.0f;
+    c_linear = (c_srgb<=0.04045f)? c_srgb/12.92f: powf((c_srgb+0.055f)/1.055, 2.4);
+    return c_linear;
+}
+
+ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
+    int ih, iw, ik;    
+    float r_lin, g_lin, b_lin, y_lin, y_srgb;
+
+    ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
+    for(ih=0; ih<(in->h); ih++)
+        for(iw=0; iw<(in->w); iw++){
+            r_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 0));
+            g_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 1));
+            b_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 2));
+            y_lin = 0.2126*r_lin + 0.7152*g_lin + 0.0722*b_lin;
+            y_srgb = (y_lin<=0.0031308f)? 12.92f*y_lin : 1.055f*(powf(y_lin, 1.0f/2.4f)-0.055f);
+            for(ik=0; ik<in->k; ik++)
+                set_val(gray, ih, iw, ik, y_srgb*255.0f);
+        }
+    return gray;
+}
+
 /* --- Function implemented by our group --- */
 
 /*
@@ -398,3 +464,8 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 
    void clamp(ip_mat *t, float low, float high);
    */
+
+  /* COSE DA CHIEDERE X IMPLEMENTAZIONI MIGLIORI
+  * brighten in percentuale
+  * grayscale con correzione gamma
+  */

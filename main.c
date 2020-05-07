@@ -138,21 +138,22 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
-    /*
+    
     printf("\nTest ip_mat_brighten\n");
-    Bitmap *image = bm_load("image.bmp");
+    Bitmap *image = bm_load("cat1.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
     ip_mat *bright = ip_mat_brighten(img, -100.0f);
     Bitmap *bbmp = ip_mat_to_bitmap(bright);
-    bm_save(bbmp, "test2.bmp");
+    bm_save(bbmp, "cat1_b.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(bright);
     ip_mat_free(img);
     
+    
     printf("\ntest ip_mat_blend\n");
-    Bitmap *im1 = bm_load("image.bmp");
-    Bitmap *im2 = bm_load("fiori.bmp");
+    Bitmap *im1 = bm_load("cat1.bmp");
+    Bitmap *im2 = bm_load("cat2.bmp");
     ip_mat *b1 = bitmap_to_ip_mat(im1);
     ip_mat *b2 = bitmap_to_ip_mat(im2); 
     ip_mat *blend = ip_mat_blend(b1, b2, 0.5f);
@@ -164,8 +165,42 @@ int main () {
     bm_free(im1);
     bm_free(im2);
     bm_free(b3);
-    */
     
+    /*
+    printf("\nTest ip_mat_to_gray\n");
+    Bitmap *g_original_bmp = bm_load("leaf.bmp");
+    ip_mat *g_original = bitmap_to_ip_mat(g_original_bmp);
+    ip_mat *gray = ip_mat_to_gray_scale(g_original);
+    Bitmap *gray_bmp = ip_mat_to_bitmap(gray);
+    bm_save(gray_bmp, "leaf_gray.bmp");
+    bm_free(g_original_bmp);
+    bm_free(gray_bmp);
+    ip_mat_free(gray);
+    ip_mat_free(g_original);
+
+    printf("\nTest ip_mat_to_gray_lum_corr\n");
+    Bitmap *gl_original_bmp = bm_load("leaf.bmp");
+    ip_mat *gl_original = bitmap_to_ip_mat(g_original_bmp);
+    ip_mat *l_gray = ip_mat_to_gray_scale_lum_corr(g_original);
+    Bitmap *l_gray_bmp = ip_mat_to_bitmap(gray);
+    bm_save(l_gray_bmp, "leaf_lum.bmp");
+    bm_free(gl_original_bmp);
+    bm_free(l_gray_bmp);
+    ip_mat_free(l_gray);
+    ip_mat_free(gl_original);
+    */
+
+    printf("\nTest ip_mat_to_gray_scale_gamma_corr\n");
+    Bitmap *gg_original_bmp = bm_load("leaf.bmp");
+    ip_mat *gg_original = bitmap_to_ip_mat(g_original_bmp);
+    ip_mat *g_gray = ip_mat_to_gray_scale_gamma_corr(g_original);
+    Bitmap *g_gray_bmp = ip_mat_to_bitmap(gray);
+    bm_save(g_gray_bmp, "leaf_gamma.bmp");
+    bm_free(gg_original_bmp);
+    bm_free(g_gray_bmp);
+    ip_mat_free(g_gray);
+    ip_mat_free(gg_original);
+        
 
     return 0;
 }
