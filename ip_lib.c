@@ -138,7 +138,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     if(!mat->data) exit(1);
     mat->data[0] = (float *)malloc(sizeof(float)*w*k*h);
     if(!mat->data[0]) exit(1);
-
+    
     for(ih=0; ih<h; ih++){
         if(ih!=0)
             mat->data[ih] = mat->data[ih-1]+w*k;
@@ -147,21 +147,6 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
                 set_val(mat, ih, iw, ik, v);
     }
     return mat;
-}
-
-void ip_mat_print(ip_mat *mat){
-    int h = mat->h;
-    int w = mat->w;
-    int k = mat->k;
-    int ih, iw, ik;
-    for(ih = 0; ih<h; ih++){
-        for(iw=0;iw<w;iw++){
-            printf(" ");
-            for(ik=0; ik<k; ik++)
-                printf("%f ", get_val(mat, ih, iw, ik));
-        }
-        printf("\n");
-    }
 }
 
 void ip_mat_free(ip_mat *a)
@@ -298,6 +283,82 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
     }
     else
         return NULL;
+}
+
+ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
+{
+    if(a)
+    {
+        int ih, iw, ik;
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik);
+                    set_val(mat, ih, iw, ik, v_a + c);
+                }
+        }
+        return mat;
+    }
+    else
+        return NULL;
+}
+
+void ip_mat_adjust_to_rgb(ip_mat *a)
+{
+    int ih, iw, ik;
+    for (ih = 0; ih < a->h; ih++)
+    {
+        for (iw = 0; iw < a->w; iw++)
+            for (ik = 0; ik < a->k; ik++)
+            {
+                float v_a = get_val(a, ih, iw, ik);
+                if(v_a > 255) v_a = 255;
+                if(v_a < 0) v_a = 0;
+                set_val(a, ih, iw, ik, v_a);
+            }
+    }
+}
+ip_mat *ip_mat_brighten(ip_mat *a, float bright)
+{
+    ip_mat *mat = ip_mat_add_scalar(a, bright);
+    ip_mat_adjust_to_rgb(mat); 
+    return mat;
+}
+
+void expand(ip_mat *a)
+{
+    if(a)
+    {
+        int ih, iw, ik;
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik) * 255.0f;
+                    set_val(a, ih, iw, ik, v_a);
+                }
+        }
+    }
+}
+
+ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
+{
+    if(a && b)
+    {
+        ip_mat *m_a = ip_mat_mul_scalar(a, alpha/255.0f);
+        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha)/255.0f);
+        ip_mat *mat = ip_mat_sum(m_a, m_b);
+        ip_mat_free(m_a);
+        ip_mat_free(m_b);
+        expand(mat);
+        return mat;
+    }
+    return NULL;
 }
 
 /* --- Function implemented by our group --- */
