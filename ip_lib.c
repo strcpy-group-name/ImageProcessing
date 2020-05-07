@@ -439,7 +439,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 
 ip_mat *create_average_filter(int w, int h, int k)
 {
-    ip_mat *filter = ip_mat_create(h, w, k, 1/9.0f);
+    ip_mat *filter = ip_mat_create(h, w, k, 1/(float)(w*h));
     return filter;
 }
 
