@@ -3,15 +3,12 @@
 #include "ip_lib.h"
 
 int main () {
-    /* VARIABILI RICICLABILI NEI TEST*/
-    /* indici e acc da poter usare per cicli vari nei test*/
+    /*
     int ih, iw, ik;
     int acc;
-    int val; /* valore*/
-    /*3 dimensioni da poter usare nei test */
+    int val; 
     int h, w, k;
 
-    /* test ip_mat_create*/
     printf("\n TEST ip_mat_create \n");
     ip_mat *mat1;
     h=5;
@@ -21,7 +18,6 @@ int main () {
     printf("\n Matrice A %d x %d x %d : \n", h, w, k);
     mat1 = ip_mat_create(h, w, k, val);
 
-    /* test set_val*/
     printf("\n TEST set_val \n");
     set_val(mat1, 0,1,1,2);
     set_val(mat1, 0,1,2,4);
@@ -30,22 +26,18 @@ int main () {
     printf("\n Matrice A modificata con set: \n");
     ip_mat_show(mat1);
 
-    /*test get_val*/
     printf("\n TEST get_val \n");
     printf("\n get val(3,4,2): %f\n", get_val(mat1, 3,4,2));
 
-    /*test init_random*/
     printf("\n TEST ip_mat_init_random \n");
     ip_mat_init_random(mat1, 1, 1);
 
     printf("\n");
     ip_mat_show(mat1);
-
-    /*test ip_mat_free*/
+    
     printf("\n TEST ip_mat_free \n");
     ip_mat_free(mat1);
 
-    /* test ip_mat_subset*/
     printf("\n TEST ip_mat_subset \n");
     ip_mat *mat2, *subset;    
 
@@ -69,7 +61,6 @@ int main () {
     ip_mat_free(mat2);
     ip_mat_free(subset);
 
-    /*test ip_mat_sum*/
     printf("\n TEST ip_mat_sum: \n");
     ip_mat *sum, *add1, *add2;
     
@@ -92,7 +83,6 @@ int main () {
     printf("\n");
     ip_mat_free(sum);
 
-    /*test ip_mat_sub*/
     printf("\n TEST ip_mat_sub: \n");
     ip_mat *sub;
     
@@ -107,7 +97,6 @@ int main () {
     ip_mat_free(add1);
     ip_mat_free(add2);
 
-    /*test ip_mat_mean*/
     printf("\n TEST ip_mat_mean: \n");
     ip_mat* a = ip_mat_create(2,2,3,6.0f);
     ip_mat* b = ip_mat_create(2,2,3,3.0f);
@@ -125,7 +114,6 @@ int main () {
     ip_mat_free(b);
     ip_mat_free(c);
 
-    /*test ip_mat_mul_scalar*/
     printf("\n TEST ip_mat_mul_scalar: \n");
     ip_mat *d = ip_mat_create(2, 2, 3, 3.0f);
     ip_mat *e = ip_mat_mul_scalar(d, 3.0f);
@@ -138,7 +126,6 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
-    /*
     printf("\n TEST ip_mat_brighten image: \n");
     Bitmap *image = bm_load("image.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
@@ -149,9 +136,7 @@ int main () {
     bm_free(bbmp);
     ip_mat_free(bright);
     ip_mat_free(img);
-    */
     
-    /*
     printf("\n TEST ip_mat_blend image: \n");
     Bitmap *im1 = bm_load("image.bmp");
     Bitmap *im2 = bm_load("fiori.bmp");
@@ -166,7 +151,6 @@ int main () {
     bm_free(im1);
     bm_free(im2);
     bm_free(b3);
-    */
     
     printf("\n TEST ip_mat_padding: \n");
     ip_mat *no_pad = ip_mat_create(3,3,3,1.0f);
@@ -178,7 +162,6 @@ int main () {
     ip_mat_free(no_pad);
     ip_mat_free(pad);
 
-    /*
     printf("\n TEST ip_mat_padding image: \n");
     Bitmap *caf = bm_load("caf.bmp");
     ip_mat *caf_nopad = bitmap_to_ip_mat(caf);
@@ -189,16 +172,17 @@ int main () {
     bm_free(bbmp);
     ip_mat_free(caf_nopad);
     ip_mat_free(caf_pad);
-    */
+
+   */
 
    
     printf("\n TEST convoluzione average image: \n");
     Bitmap *caf = bm_load("flower.bmp");
     ip_mat *caf_noblur = bitmap_to_ip_mat(caf);
-    ip_mat *ker_avg = create_average_filter(3,3,3);
+    ip_mat *ker_avg = create_average_filter(25,25,3);
     ip_mat *caf_blur = ip_mat_convolve(caf_noblur, ker_avg);
     Bitmap *bbmp = ip_mat_to_bitmap(caf_blur);
-    bm_save(bbmp, "flower_blur_average.bmp");
+    bm_save(bbmp, "flower.bmp");
     bm_free(caf);
     bm_free(bbmp);
     ip_mat_free(caf_noblur);

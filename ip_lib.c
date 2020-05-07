@@ -153,10 +153,13 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 
 void ip_mat_free(ip_mat *a)
 {
-    free(a->data[0]);
-    free(a->data);
-    free(a->stat);
-    free(a);
+    if(a)
+    {
+        free(a->data[0]);
+        free(a->data);
+        free(a->stat);
+        free(a);
+    }
 }
 
 void ip_mat_init_random(ip_mat *t, float mean, float var)
@@ -391,16 +394,16 @@ void rescale(ip_mat *t, float new_max)
     }
 }
 
-float calculate_convolution(ip_mat *a, ip_mat *ker, int k)
+float calculate_convolution(ip_mat *a, ip_mat *ker, int i ,int j, int k)
 {
     if (a && ker)
     {
         int ih, iw;
         float acc = 0.0f;
-        for (ih = 0; ih < a->h; ih++)
+        for (ih = 0; ih < ker->h; ih++)
         {
-            for (iw = 0; iw < a->w; iw++)
-                acc += get_val(a, ih, iw, k) * get_val(ker, ih, iw, k);
+            for (iw = 0; iw < ker->w; iw++)
+                acc += get_val(a, ih+i, iw+j, k) * get_val(ker, ih, iw, k);
         }
         return acc;
     }
@@ -416,18 +419,16 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
         int padw_amt = (f->w - 1) / 2;
 
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
-        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
 
         int ih, iw, ik;
-        for (ih = padh_amt; ih < pad_a->h - padh_amt; ih++)
+        for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
-            for (iw = padw_amt; iw < pad_a->w - padw_amt; iw++)
+            for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
                 for (ik = 0; ik < pad_a->k; ik++)
                 {
-                    ip_mat *temp = ip_mat_subset(pad_a, ih - padh_amt, ih + padw_amt + 1, iw - padw_amt, iw + padw_amt + 1);
-                    float val = calculate_convolution(temp, f, ik);
-                    set_val(mat, ih - padh_amt, iw - padw_amt, ik, val);
-                    ip_mat_free(temp);
+                    float val = calculate_convolution(pad_a, f, ih, iw, ik);
+                    set_val(mat, ih, iw, ik, val);
                 }
         }
         ip_mat_free(pad_a);
@@ -440,6 +441,15 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 ip_mat *create_average_filter(int w, int h, int k)
 {
     ip_mat *filter = ip_mat_create(h, w, k, 1/(float)(w*h));
+    return filter;
+}
+
+ip_mat *create_edge_filter()
+{
+    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
+    set_val(filter, 1, 1, 0, 8.0f);
+    set_val(filter, 1, 1, 1, 8.0f);
+    set_val(filter, 1, 1, 2, 8.0f);
     return filter;
 }
 
