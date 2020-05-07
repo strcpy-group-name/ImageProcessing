@@ -24,7 +24,7 @@ TODO:
 	- [X] Luminosità
 	- [ ] Scala di grigi
 	- [ ] Rumore
-	- [ ] Blending
+	- [X] Blending
 
 - [ ] PARTE 3
 	- [ ] Convoluzione
