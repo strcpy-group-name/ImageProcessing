@@ -138,7 +138,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     if(!mat->data) exit(1);
     mat->data[0] = (float *)malloc(sizeof(float)*w*k*h);
     if(!mat->data[0]) exit(1);
-
+    
     for(ih=0; ih<h; ih++){
         if(ih!=0)
             mat->data[ih] = mat->data[ih-1]+w*k;
@@ -324,9 +324,47 @@ void ip_mat_adjust_to_rgb(ip_mat *a)
 }
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
-    ip_mat *mat = ip_mat_add_scalar(a, bright); 
-    ip_mat_adjust_to_rgb(mat);
+    ip_mat *mat = ip_mat_add_scalar(a, bright);
+    ip_mat_adjust_to_rgb(mat); 
     return mat;
+}
+
+void normalize(ip_mat *a)
+{
+    int ih, ik, iw;
+    for (ih = 0; ih < a->h; ih++)
+    {
+        for (iw = 0; iw < a->w; iw++)
+            for (ik = 0; ik < a->k; ik++)
+            {
+                float v_a = get_val(a, ih, iw, ik);
+                set_val(a, ih, iw, ik, v_a/255.0f);
+            }
+    }
+}
+
+ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
+{
+    if(a && b)
+    {
+        normalize(a);
+        normalize(b);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+        int ih, ik, iw;
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik);
+                    float v_b = get_val(b, ih, iw, ik);
+                    float val = alpha * v_a + (1 - alpha) * v_b;
+                    set_val(mat, ih, iw, ik, val*255.0f);
+                }
+        }
+        return mat;
+    }
+    return NULL;
 }
 
 /* --- Function implemented by our group --- */
