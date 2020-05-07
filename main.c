@@ -3,7 +3,6 @@
 #include "ip_lib.h"
 
 int main () {
-    /*
     int ih, iw, ik;
     int acc;
     int val; 
@@ -126,6 +125,8 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
+    /*
+
     printf("\n TEST ip_mat_brighten image: \n");
     Bitmap *image = bm_load("image.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
@@ -173,7 +174,7 @@ int main () {
     ip_mat_free(caf_nopad);
     ip_mat_free(caf_pad);
 
-   */
+   
 
    
     printf("\n TEST convoluzione average image: \n");
@@ -188,6 +189,7 @@ int main () {
     ip_mat_free(caf_noblur);
     ip_mat_free(caf_blur);
     ip_mat_free(ker_avg);
+    */
     
 
     return 0;
