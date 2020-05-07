@@ -138,7 +138,7 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
-    /*test bmp*/
+    /*
     printf("\nTest ip_mat_brighten\n");
     Bitmap *image = bm_load("image.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
@@ -164,6 +164,7 @@ int main () {
     bm_free(im1);
     bm_free(im2);
     bm_free(b3);
+    */
 
     return 0;
 }
