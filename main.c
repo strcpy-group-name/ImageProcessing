@@ -3,6 +3,7 @@
 #include "ip_lib.h"
 
 int main () {
+    /*
     int ih, iw, ik;
     int acc;
     int val; 
@@ -124,20 +125,20 @@ int main () {
 
     ip_mat_free(d);
     ip_mat_free(e);
-
-    /*
+    */
 
     printf("\n TEST ip_mat_brighten image: \n");
-    Bitmap *image = bm_load("image.bmp");
+    Bitmap *image = bm_load("caf.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
     ip_mat *bright = ip_mat_brighten(img, -100.0f);
     Bitmap *bbmp = ip_mat_to_bitmap(bright);
-    bm_save(bbmp, "test2.bmp");
+    bm_save(bbmp, "caf_b.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(bright);
     ip_mat_free(img);
-    
+
+    /*
     printf("\n TEST ip_mat_blend image: \n");
     Bitmap *im1 = bm_load("image.bmp");
     Bitmap *im2 = bm_load("fiori.bmp");
@@ -152,6 +153,7 @@ int main () {
     bm_free(im1);
     bm_free(im2);
     bm_free(b3);
+
     
     printf("\n TEST ip_mat_padding: \n");
     ip_mat *no_pad = ip_mat_create(3,3,3,1.0f);
