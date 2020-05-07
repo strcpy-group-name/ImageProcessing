@@ -393,16 +393,13 @@ void rescale(ip_mat *t, float new_max)
 
 float calculate_convolution(ip_mat *a, ip_mat *ker, int k)
 {
-    ip_mat_show(a);
-    ip_mat_show(ker);
-
     if (a && ker)
     {
         int ih, iw;
         float acc = 0.0f;
-        for (ih = 1; ih < a->h - 1; ih++)
+        for (ih = 0; ih < a->h; ih++)
         {
-            for (iw = 1; iw < a->w - 1; iw++)
+            for (iw = 0; iw < a->w; iw++)
                 acc += get_val(a, ih, iw, k) * get_val(ker, ih, iw, k);
         }
         return acc;
@@ -428,7 +425,6 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                 for (ik = 0; ik < pad_a->k; ik++)
                 {
                     ip_mat *temp = ip_mat_subset(pad_a, ih - padh_amt, ih + padw_amt + 1, iw - padw_amt, iw + padw_amt + 1);
-                    ip_mat_show(temp);
                     float val = calculate_convolution(temp, f, ik);
                     set_val(mat, ih - padh_amt, iw - padw_amt, ik, val);
                     ip_mat_free(temp);
@@ -439,6 +435,12 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     }
     else
         return NULL;
+}
+
+ip_mat *create_average_filter(int w, int h, int k)
+{
+    ip_mat *filter = ip_mat_create(h, w, k, 1/9.0f);
+    return filter;
 }
 
 /* --- Function implemented by our group --- */
