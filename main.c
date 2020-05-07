@@ -167,7 +167,7 @@ int main () {
     */
     
     printf("\n TEST ip_mat_padding: \n");
-    ip_mat *no_pad = ip_mat_create(3,3,1,1.0f);
+    ip_mat *no_pad = ip_mat_create(3,3,3,1.0f);
     ip_mat *pad = ip_mat_padding(no_pad, 2, 2);
 
     ip_mat_show(no_pad);
@@ -176,7 +176,7 @@ int main () {
     ip_mat_free(no_pad);
     ip_mat_free(pad);
 
-    
+    /*
     printf("\n TEST ip_mat_padding image: \n");
     Bitmap *caf = bm_load("caf.bmp");
     ip_mat *caf_nopad = bitmap_to_ip_mat(caf);
@@ -187,8 +187,7 @@ int main () {
     bm_free(bbmp);
     ip_mat_free(caf_nopad);
     ip_mat_free(caf_pad);
-    
-    
+    */
 
     return 0;
 }

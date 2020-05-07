@@ -98,6 +98,7 @@ float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
     else
     {
         printf("Errore get_val!!!");
+        printf("%d %d %d\n", i, j, k);
         exit(1);
     }
 }
@@ -388,6 +389,56 @@ void rescale(ip_mat *t, float new_max)
                 }
         }
     }
+}
+
+float calculate_convolution(ip_mat *a, ip_mat *ker, int k)
+{
+    ip_mat_show(a);
+    ip_mat_show(ker);
+
+    if (a && ker)
+    {
+        int ih, iw;
+        float acc = 0.0f;
+        for (ih = 1; ih < a->h - 1; ih++)
+        {
+            for (iw = 1; iw < a->w - 1; iw++)
+                acc += get_val(a, ih, iw, k) * get_val(ker, ih, iw, k);
+        }
+        return acc;
+    }
+    else
+        return 0;
+}
+
+ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
+{
+    if (a && f)
+    {
+        int padh_amt = (f->h - 1) / 2;
+        int padw_amt = (f->w - 1) / 2;
+
+        ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+
+        int ih, iw, ik;
+        for (ih = padh_amt; ih < pad_a->h - padh_amt; ih++)
+        {
+            for (iw = padw_amt; iw < pad_a->w - padw_amt; iw++)
+                for (ik = 0; ik < pad_a->k; ik++)
+                {
+                    ip_mat *temp = ip_mat_subset(pad_a, ih - padh_amt, ih + padw_amt + 1, iw - padw_amt, iw + padw_amt + 1);
+                    ip_mat_show(temp);
+                    float val = calculate_convolution(temp, f, ik);
+                    set_val(mat, ih - padh_amt, iw - padw_amt, ik, val);
+                    ip_mat_free(temp);
+                }
+        }
+        ip_mat_free(pad_a);
+        return mat;
+    }
+    else
+        return NULL;
 }
 
 /* --- Function implemented by our group --- */
