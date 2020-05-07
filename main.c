@@ -149,13 +149,13 @@ int main () {
     bm_free(bbmp);
     ip_mat_free(bright);
     ip_mat_free(img);
-
+    */
     printf("\ntest ip_mat_blend\n");
     Bitmap *im1 = bm_load("image.bmp");
     Bitmap *im2 = bm_load("fiori.bmp");
     ip_mat *b1 = bitmap_to_ip_mat(im1);
     ip_mat *b2 = bitmap_to_ip_mat(im2); 
-    ip_mat *blend = ip_mat_blend(b1, b2, 0.0f);
+    ip_mat *blend = ip_mat_blend(b1, b2, 0.5f);
     Bitmap *b3 = ip_mat_to_bitmap(blend);
     bm_save(b3, "blend.bmp");
     ip_mat_free(b1);
@@ -164,7 +164,7 @@ int main () {
     bm_free(im1);
     bm_free(im2);
     bm_free(b3);
-    */
+    
 
     return 0;
 }

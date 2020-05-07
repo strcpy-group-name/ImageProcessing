@@ -329,32 +329,20 @@ ip_mat *ip_mat_brighten(ip_mat *a, float bright)
     return mat;
 }
 
-void normalize(ip_mat *a)
-{
-    int ih, ik, iw;
-    for (ih = 0; ih < a->h; ih++)
-    {
-        for (iw = 0; iw < a->w; iw++)
-            for (ik = 0; ik < a->k; ik++)
-            {
-                float v_a = get_val(a, ih, iw, ik);
-                set_val(a, ih, iw, ik, v_a/255.0f);
-            }
-    }
-}
-
-
 void expand(ip_mat *a)
 {
-    int ih, ik, iw;
-    for (ih = 0; ih < a->h; ih++)
+    if(a)
     {
-        for (iw = 0; iw < a->w; iw++)
-            for (ik = 0; ik < a->k; ik++)
-            {
-                float v_a = get_val(a, ih, iw, ik);
-                set_val(a, ih, iw, ik, v_a*255.0f);
-            }
+        int ih, iw, ik;
+        for (ih = 0; ih < a->h; ih++)
+        {
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik) * 255.0f;
+                    set_val(a, ih, iw, ik, v_a);
+                }
+        }
     }
 }
 
@@ -362,10 +350,8 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 {
     if(a && b)
     {
-        normalize(a);
-        normalize(b);
-        ip_mat *m_a = ip_mat_mul_scalar(a, alpha);
-        ip_mat *m_b = ip_mat_mul_scalar(b, 1 - alpha);
+        ip_mat *m_a = ip_mat_mul_scalar(a, alpha/255.0f);
+        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha)/255.0f);
         ip_mat *mat = ip_mat_sum(m_a, m_b);
         ip_mat_free(m_a);
         ip_mat_free(m_b);
