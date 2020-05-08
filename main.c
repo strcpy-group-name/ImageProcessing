@@ -139,7 +139,7 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
-    
+    /*
     printf("\nTest ip_mat_brighten\n");
     Bitmap *image = bm_load("flower.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
@@ -177,7 +177,20 @@ int main () {
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
-     
+    */
+
+    printf("\nTest ip_mat_convolve average_filter\n");
+    Bitmap *image = bm_load("flower.bmp");
+    ip_mat *img = bitmap_to_ip_mat(image);
+    ip_mat *ker = create_edge_filter();
+    ip_mat *blur_avg = ip_mat_convolve(img, ker);
+    Bitmap *bbmp = ip_mat_to_bitmap(blur_avg);
+    bm_save(bbmp, "maestro_edge.bmp");
+    bm_free(image);
+    bm_free(bbmp);
+    ip_mat_free(blur_avg);
+    ip_mat_free(img);
+    ip_mat_free(ker);
 
     return 0;
 }

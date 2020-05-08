@@ -435,6 +435,86 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
     return gray;
 }
 
+ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
+{
+    if(a)
+    {
+        ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
+
+        int ih, iw, ik, i;
+        for(i = 0; i < a->h * a->w * a->k; i++)
+        {
+            iw = (i / a->k) % a->w;
+            ih = i / (a->w * a->k);
+            ik = i % a->k;
+            float v_a = get_val(a, ih, iw, ik);
+            set_val(nuova, ih + pad_h, iw + pad_w, ik, v_a);
+        }
+        return nuova;
+    }
+    else
+        return NULL;
+}
+
+float calculate_convolution(ip_mat *a, ip_mat *ker, int i ,int j, int k)
+{
+    if (a && ker)
+    {
+        int ih, iw;
+        float acc = 0.0f;
+        for (ih = 0; ih < ker->h; ih++)
+        {
+            for (iw = 0; iw < ker->w; iw++)
+                acc += get_val(a, ih+i, iw+j, k) * get_val(ker, ih, iw, k);
+        }
+        return acc;
+    }
+    else
+        return 0;
+}
+
+ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
+{
+    if (a && f)
+    {
+        int padh_amt = (f->h - 1) / 2;
+        int padw_amt = (f->w - 1) / 2;
+
+        ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
+
+        int ih, iw, ik;
+        for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
+        {
+            for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
+                for (ik = 0; ik < pad_a->k; ik++)
+                {
+                    float val = calculate_convolution(pad_a, f, ih, iw, ik);
+                    set_val(mat, ih, iw, ik, val);
+                }
+        }
+        ip_mat_free(pad_a);
+        return mat;
+    }
+    else
+        return NULL;
+}
+
+ip_mat *create_average_filter(int w, int h, int k)
+{
+    ip_mat *filter = ip_mat_create(h, w, k, 1/(float)(w*h));
+    return filter;
+}
+
+ip_mat *create_edge_filter()
+{
+    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
+    set_val(filter, 1, 1, 0, 8.0f);
+    set_val(filter, 1, 1, 1, 8.0f);
+    set_val(filter, 1, 1, 2, 8.0f);
+    return filter;
+}
+
 /* --- Function implemented by our group --- */
 
 /*
