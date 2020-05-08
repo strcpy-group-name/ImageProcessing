@@ -10,15 +10,15 @@ TODO:
 	- [X] Liberare memoria
 	- [X] Get/Set
 	- [X] Init random
-	- [] Copia
-	- [ ] Concatenazione
+	- [X] Copia
+	- [X] Concatenazione
 	- [X] Subset
 	- [X] Somma
 	- [X] Sottrazione
 	- [X] Moltiplicazione scalare
 	- [X] Addizione scalare
 	- [X] Media
-	- [ ] Statistiche
+	- [X] Statistiche
 
 - [ ] PARTE 2
 	- [X] Luminosità
