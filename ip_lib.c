@@ -666,6 +666,15 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
     return filter1;
 }
 
+ip_mat *create_edge_filter()
+{
+    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
+    set_val(filter,1,1,0,8.0f);
+    set_val(filter,1,1,1,8.0f);
+    set_val(filter,1,1,2,8.0f);
+    return filter;
+}
+
 /* --- Function implemented by our group --- */
 
 /*
