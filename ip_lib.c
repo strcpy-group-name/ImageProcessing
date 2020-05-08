@@ -86,37 +86,6 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
     }
     return b;
 }
-/*
-float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
-{
-    if (a && i < a->h && j < a->w && k < a->k)
-    { 
-        int n_channels;
-        n_channels = a->k;
-        return a->data[i][j*n_channels+k];    
-    }
-    else
-    {
-        printf("Errore get_val!!!");
-        exit(1);
-    }
-}
-
-void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
-{
-    if (a && i < a->h && j < a->w && k < a->k)
-    {
-        int n_channels;
-        n_channels = a->k;
-        a->data[i][j*n_channels+k] = v;     
-    }
-    else
-    {
-        printf("Errore set_val!!!");
-        exit(1);
-    }
-}
-*/
 
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
@@ -159,33 +128,6 @@ float get_normal_random()
     return cos(2 * PI * y2) * sqrt(-2. * log(y1));
 }
 /* PARTE 1 */
-/*
-ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
-    ip_mat *mat;
-    int ih, iw, ik;
-    mat = (ip_mat *)malloc(sizeof(ip_mat));
-    if(!mat) exit(1);
-    mat -> w = w;
-    mat -> h = h;
-    mat -> k = k;
-    mat->stat = (stats *) malloc(sizeof(stats));
-    if(!mat->stat) exit(1);
-    mat->data = (float **)malloc(sizeof(float *)*h);
-    if(!mat->data) exit(1);
-    mat->data[0] = (float *)malloc(sizeof(float)*w*k*h);
-    if(!mat->data[0]) exit(1);
-    
-    for(ih=0; ih<h; ih++){
-        if(ih!=0)
-            mat->data[ih] = mat->data[ih-1]+w*k;
-        for(iw=0;iw<w;iw++)
-            for(ik=0; ik<k; ik++)
-                set_val(mat, ih, iw, ik, v);
-    }
-    return mat;
-}
-*/
-
 
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     ip_mat *mat;
@@ -214,7 +156,6 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 
 void ip_mat_free(ip_mat *a)
 {
-    /*free(a->data[0]);*/
     free(a->data);
     free(a->stat);
     free(a);
@@ -530,3 +471,10 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
 
    void clamp(ip_mat *t, float low, float high);
    */
+
+  /* FUNZIONI EXTRA 
+  *
+  * ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
+  * 
+  * ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
+  */
