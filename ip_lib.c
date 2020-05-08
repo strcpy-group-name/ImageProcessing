@@ -617,6 +617,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                 }
         }
         ip_mat_free(pad_a);
+        rescale(mat, 255.0f);
         return mat;
     }
     else
@@ -642,16 +643,43 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
         dx = ih-cx;
         for(iw = 0; iw<h; iw++){
             dy = iw-cy;
-            val = (1/(2*M_PI*sigma*sigma))*pow(M_E,(-(dx*dx+dy*dy)/(2*sigma*sigma)));
+            val = (1/(2*PI*sigma*sigma))* exp(-(dx*dx+dy*dy)/(2*sigma*sigma));
             for (ik=0; ik<k; ik++){
                 set_val(filter, ih, iw, ik, val);
                 acc +=val;
             }
         }
-    }    
+    }   
     filter1 = ip_mat_mul_scalar(filter, 1/acc);
     ip_mat_free(filter);
+    rescale(filter1, 255.0f);
+    clamp(filter1, 0.0f, 255.0f);
     return filter1;
+}
+
+ip_mat *create_edge_filter()
+{
+    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
+    set_val(filter,1,1,0,8.0f);
+    set_val(filter,1,1,1,8.0f);
+    set_val(filter,1,1,2,8.0f);
+    return filter;
+}
+
+ip_mat *create_sharpen_filter()
+{
+    return NULL;
+}
+
+
+ip_mat *create_emboss_filter()
+{
+    return NULL;
+}
+
+ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
+{
+    return NULL;
 }
 
 /* --- Function implemented by our group --- */
