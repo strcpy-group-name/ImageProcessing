@@ -33,7 +33,7 @@ TODO:
 		- [ ] Edge
 		- [ ] Emboss
 		- [X] Average
-		- [ ] Gaussian
+		- [X] Gaussian
 	- [X] Normalizzazione
 		- [X] Rescale
 		- [X] Clamp
