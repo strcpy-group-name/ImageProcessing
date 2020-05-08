@@ -86,14 +86,14 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
     }
     return b;
 }
-
+/*
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (a && i < a->h && j < a->w && k < a->k)
-    { /* j>=0 and k>=0 and i>=0 is non sense*/
+    { 
         int n_channels;
         n_channels = a->k;
-        return a->data[i][j*n_channels+k];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        return a->data[i][j*n_channels+k];    
     }
     else
     {
@@ -108,7 +108,7 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     {
         int n_channels;
         n_channels = a->k;
-        a->data[i][j*n_channels+k] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        a->data[i][j*n_channels+k] = v;     
     }
     else
     {
@@ -116,6 +116,41 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
         exit(1);
     }
 }
+*/
+
+float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
+{
+    if (a && i < a->h && j < a->w && k < a->k)
+    { /* j>=0 and k>=0 and i>=0 is non sense*/
+        int index = k + j * a->k + i * a->k * a->w;
+        return a->data[index];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+    }
+    else
+    {
+        printf("Errore get_val!!!");
+        printf("%d %d %d\n", i, j, k);
+        exit(1);
+    }
+}
+
+void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
+{
+    if (a && i < a->h && j < a->w && k < a->k)
+    {
+        /*int index = k + j * a->w + i * a->k * a->w;*/
+        int index = k + j * a->k + i * a->k * a->w;
+        a->data[index] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+    }
+    else
+    {
+        printf("Errore set_val!!!\n");
+        printf("%d %d %d\n", a->h, a->w, a->k);
+        printf("%d %d %d\n", i, j, k);
+        exit(1);
+    }
+}
+
+
 
 float get_normal_random()
 {
@@ -124,7 +159,7 @@ float get_normal_random()
     return cos(2 * PI * y2) * sqrt(-2. * log(y1));
 }
 /* PARTE 1 */
-
+/*
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     ip_mat *mat;
     int ih, iw, ik;
@@ -149,10 +184,37 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     }
     return mat;
 }
+*/
+
+
+ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
+    ip_mat *mat;
+    int ih, iw, ik, i;
+    mat = (ip_mat *)malloc(sizeof(ip_mat));
+    if(!mat) exit(1);
+    mat-> w = w;
+    mat-> h = h;
+    mat-> k = k;
+    mat->stat = (stats *) malloc(sizeof(stats));
+    if(!mat->stat) exit(1);
+    mat->data = (float *)malloc(sizeof(float)*h*w*k);
+    if(!mat->data) exit(1);
+    
+    for(i = 0; i < w*h*k; i++)
+    {
+        ik = i % k;
+        iw = (i / k) % w;
+        ih = i / (w * k);
+        set_val(mat, ih, iw, ik, v);
+    }
+
+    return mat;
+}
+
 
 void ip_mat_free(ip_mat *a)
 {
-    free(a->data[0]);
+    /*free(a->data[0]);*/
     free(a->data);
     free(a->stat);
     free(a);
@@ -210,6 +272,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b){
         int ih, iw, ik;
 
         c = ip_mat_create(a->h, a->w, a->k, 0);
+        
 
         for(ih = 0; ih < c->h; ih++)
             for(iw = 0; iw < c->w; iw++)
@@ -217,6 +280,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b){
                     float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
                     set_val(c, ih, iw, ik, sum);
                 }
+        
         return c;
     }
     else
@@ -395,7 +459,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in){
             g = get_val(in, ih, iw, 1);
             b = get_val(in, ih, iw, 2);
             val = 0.3*r + 0.59*g + 0.11*b;
-            for(ik=0; ik<in->k; ik++)
+            for(ik=0; ik<(in->k); ik++)
                 set_val(gray, ih, iw, ik, val);
         }
     return gray;
@@ -464,8 +528,3 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
 
    void clamp(ip_mat *t, float low, float high);
    */
-
-  /* COSE DA CHIEDERE X IMPLEMENTAZIONI MIGLIORI
-  * brighten in percentuale
-  * grayscale con correzione gamma
-  */

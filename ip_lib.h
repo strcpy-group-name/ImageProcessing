@@ -27,7 +27,7 @@ typedef struct
     unsigned int h; /* <- altezza */
     unsigned int k; /* <- canali */
     stats *stat;    /* <- statistiche per canale */
-    float **data;  /* <- matrice 3D di valori float, modificato da triplo a doppio x linearizzazione con 3 metodo*/
+    float *data;  /* <- matrice 3D di valori float, modificato da triplo a doppio x linearizzazione con 3 metodo*/
 } ip_mat;
 
 /**** PARTE 1: TIPO DI DATI ip_mat E MEMORIA ****/
@@ -115,6 +115,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b);
  * */
 ip_mat *ip_mat_to_gray_scale(ip_mat *in);
 
+
 /* Effettua la fusione (combinazione convessa) di due immagini */
 ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha);
 
@@ -129,11 +130,6 @@ ip_mat *ip_mat_brighten(ip_mat *a, float bright);
  * */
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount);
 
-/*** FUNIONI NOSTRE EXTRA ***/
-/* Scala di grigi con correzione luminosità */
-ip_mat * ip_mat_to_gray_scale_lum_corr(ip_mat *in);
-/* Scala di grigi con correzione gamma */
-ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
 
 /* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".
@@ -203,5 +199,16 @@ void ip_mat_show(ip_mat *t);
 /* Visualizza a video le statistiche per ogni canale.
  * */
 void ip_mat_show_stats(ip_mat *t);
+
+
+
+/* FUNZIONI EXTRA*/
+/* scala di grigi con correzione approssimata per luminosità*/
+ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
+
+/* scala di grigi con gamma correction*/
+ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
+
+
 
 #endif /*IP_LIB_H*/

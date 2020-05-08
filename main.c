@@ -20,6 +20,7 @@ int main () {
     val = 2;
     printf("\n Matrice A %d x %d x %d : \n", h, w, k);
     mat1 = ip_mat_create(h, w, k, val);
+    ip_mat_show(mat1);
 
     /* test set_val*/
     printf("\n TEST set_val \n");
@@ -166,7 +167,7 @@ int main () {
     bm_free(im2);
     bm_free(b3);
     
-    /*
+    
     printf("\nTest ip_mat_to_gray\n");
     Bitmap *g_original_bmp = bm_load("leaf.bmp");
     ip_mat *g_original = bitmap_to_ip_mat(g_original_bmp);
@@ -177,7 +178,8 @@ int main () {
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
-
+    
+    /*
     printf("\nTest ip_mat_to_gray_lum_corr\n");
     Bitmap *gl_original_bmp = bm_load("leaf.bmp");
     ip_mat *gl_original = bitmap_to_ip_mat(g_original_bmp);
@@ -192,14 +194,16 @@ int main () {
 
     printf("\nTest ip_mat_to_gray_scale_gamma_corr\n");
     Bitmap *gg_original_bmp = bm_load("leaf.bmp");
-    ip_mat *gg_original = bitmap_to_ip_mat(g_original_bmp);
-    ip_mat *g_gray = ip_mat_to_gray_scale_gamma_corr(g_original);
-    Bitmap *g_gray_bmp = ip_mat_to_bitmap(gray);
-    bm_save(g_gray_bmp, "leaf_gamma.bmp");
+    ip_mat *gg_original = bitmap_to_ip_mat(gg_original_bmp);
+    ip_mat *g_gray = ip_mat_to_gray_scale_gamma_corr(gg_original);
+    Bitmap *g_gray_bmp = ip_mat_to_bitmap(g_gray);
+    bm_save(g_gray_bmp, "leaf_gamma_bis.bmp");
     bm_free(gg_original_bmp);
     bm_free(g_gray_bmp);
     ip_mat_free(g_gray);
     ip_mat_free(gg_original);
+    
+    
         
 
     return 0;
