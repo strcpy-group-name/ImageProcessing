@@ -3,15 +3,12 @@
 #include "ip_lib.h"
 
 int main () {
-    /* VARIABILI RICICLABILI NEI TEST*/
-    /* indici e acc da poter usare per cicli vari nei test*/
+    /*
     int ih, iw, ik;
     int acc;
-    int val; /* valore*/
-    /*3 dimensioni da poter usare nei test */
+    int val; 
     int h, w, k;
 
-    /* test ip_mat_create*/
     printf("\n TEST ip_mat_create \n");
     ip_mat *mat1;
     h=5;
@@ -22,7 +19,6 @@ int main () {
     mat1 = ip_mat_create(h, w, k, val);
     ip_mat_show(mat1);
 
-    /* test set_val*/
     printf("\n TEST set_val \n");
     set_val(mat1, 0,1,1,2);
     set_val(mat1, 0,1,2,4);
@@ -31,22 +27,18 @@ int main () {
     printf("\n Matrice A modificata con set: \n");
     ip_mat_show(mat1);
 
-    /*test get_val*/
     printf("\n TEST get_val \n");
     printf("\n get val(3,4,2): %f\n", get_val(mat1, 3,4,2));
 
-    /*test init_random*/
     printf("\n TEST ip_mat_init_random \n");
     ip_mat_init_random(mat1, 1, 1);
 
     printf("\n");
     ip_mat_show(mat1);
-
-    /*test ip_mat_free*/
+    
     printf("\n TEST ip_mat_free \n");
     ip_mat_free(mat1);
 
-    /* test ip_mat_subset*/
     printf("\n TEST ip_mat_subset \n");
     ip_mat *mat2, *subset;    
 
@@ -70,7 +62,6 @@ int main () {
     ip_mat_free(mat2);
     ip_mat_free(subset);
 
-    /*test ip_mat_sum*/
     printf("\n TEST ip_mat_sum: \n");
     ip_mat *sum, *add1, *add2;
     
@@ -93,7 +84,6 @@ int main () {
     printf("\n");
     ip_mat_free(sum);
 
-    /*test ip_mat_sub*/
     printf("\n TEST ip_mat_sub: \n");
     ip_mat *sub;
     
@@ -108,7 +98,6 @@ int main () {
     ip_mat_free(add1);
     ip_mat_free(add2);
 
-    /*test ip_mat_mean*/
     printf("\n TEST ip_mat_mean: \n");
     ip_mat* a = ip_mat_create(2,2,3,6.0f);
     ip_mat* b = ip_mat_create(2,2,3,3.0f);
@@ -126,7 +115,6 @@ int main () {
     ip_mat_free(b);
     ip_mat_free(c);
 
-    /*test ip_mat_mul_scalar*/
     printf("\n TEST ip_mat_mul_scalar: \n");
     ip_mat *d = ip_mat_create(2, 2, 3, 3.0f);
     ip_mat *e = ip_mat_mul_scalar(d, 3.0f);
@@ -138,14 +126,16 @@ int main () {
 
     ip_mat_free(d);
     ip_mat_free(e);
+    */
 
+   /*
     
     printf("\nTest ip_mat_brighten\n");
-    Bitmap *image = bm_load("cat1.bmp");
+    Bitmap *image = bm_load("fiori.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
     ip_mat *bright = ip_mat_brighten(img, -100.0f);
     Bitmap *bbmp = ip_mat_to_bitmap(bright);
-    bm_save(bbmp, "cat1_b.bmp");
+    bm_save(bbmp, "fiori.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(bright);
@@ -153,8 +143,8 @@ int main () {
     
     
     printf("\ntest ip_mat_blend\n");
-    Bitmap *im1 = bm_load("cat1.bmp");
-    Bitmap *im2 = bm_load("cat2.bmp");
+    Bitmap *im1 = bm_load("fiori.bmp");
+    Bitmap *im2 = bm_load("image.bmp");
     ip_mat *b1 = bitmap_to_ip_mat(im1);
     ip_mat *b2 = bitmap_to_ip_mat(im2); 
     ip_mat *blend = ip_mat_blend(b1, b2, 0.5f);
@@ -169,41 +159,44 @@ int main () {
     
     
     printf("\nTest ip_mat_to_gray\n");
-    Bitmap *g_original_bmp = bm_load("leaf.bmp");
+    Bitmap *g_original_bmp = bm_load("image.bmp");
     ip_mat *g_original = bitmap_to_ip_mat(g_original_bmp);
     ip_mat *gray = ip_mat_to_gray_scale(g_original);
     Bitmap *gray_bmp = ip_mat_to_bitmap(gray);
-    bm_save(gray_bmp, "leaf_gray.bmp");
+    bm_save(gray_bmp, "image_gray.bmp");
     bm_free(g_original_bmp);
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
+
+    */
     
-    /*
+    
     printf("\nTest ip_mat_to_gray_lum_corr\n");
-    Bitmap *gl_original_bmp = bm_load("leaf.bmp");
-    ip_mat *gl_original = bitmap_to_ip_mat(g_original_bmp);
-    ip_mat *l_gray = ip_mat_to_gray_scale_lum_corr(g_original);
-    Bitmap *l_gray_bmp = ip_mat_to_bitmap(gray);
-    bm_save(l_gray_bmp, "leaf_lum.bmp");
+    Bitmap *gl_original_bmp = bm_load("image.bmp");
+    ip_mat *gl_original = bitmap_to_ip_mat(gl_original_bmp);
+    ip_mat *l_gray = ip_mat_to_gray_scale_lum_corr(gl_original);
+    Bitmap *l_gray_bmp = ip_mat_to_bitmap(l_gray);
+    bm_save(l_gray_bmp, "image_lum.bmp");
     bm_free(gl_original_bmp);
     bm_free(l_gray_bmp);
     ip_mat_free(l_gray);
     ip_mat_free(gl_original);
-    */
+    
 
+/*
     printf("\nTest ip_mat_to_gray_scale_gamma_corr\n");
-    Bitmap *gg_original_bmp = bm_load("leaf.bmp");
+    Bitmap *gg_original_bmp = bm_load("image.bmp");
     ip_mat *gg_original = bitmap_to_ip_mat(gg_original_bmp);
     ip_mat *g_gray = ip_mat_to_gray_scale_gamma_corr(gg_original);
     Bitmap *g_gray_bmp = ip_mat_to_bitmap(g_gray);
-    bm_save(g_gray_bmp, "leaf_gamma_bis.bmp");
+    bm_save(g_gray_bmp, "image_gamma_bis.bmp");
     bm_free(gg_original_bmp);
     bm_free(g_gray_bmp);
     ip_mat_free(g_gray);
     ip_mat_free(gg_original);
     
-    
+    */
         
 
     return 0;

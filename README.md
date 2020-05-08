@@ -27,13 +27,14 @@ TODO:
 	- [X] Blending
 
 - [ ] PARTE 3
-	- [ ] Convoluzione
+	- [X] Convoluzione
 	- [ ] Filtri
 		- [ ] Sharpen
 		- [ ] Edge
 		- [ ] Emboss
-		- [ ] Average
+		- [X] Average
 		- [ ] Gaussian
-	- [ ] Normalizzazione
-		- [ ] Rescale
-		- [ ] Clamp
+	- [X] Normalizzazione
+		- [X] Rescale
+		- [X] Clamp
+		- [X] Padding
