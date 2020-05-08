@@ -7,7 +7,7 @@ int main () {
     int acc;
     int val; 
     int h, w, k;
-
+    
     printf("\n TEST ip_mat_create \n");
     ip_mat *mat1;
     h=5;
@@ -135,7 +135,8 @@ int main () {
 
     ip_mat_free(no_pad);
     ip_mat_free(pad);
-
+    
+    
     printf("\n TEST ip_mat_sum, ip_mat_show_stats, ip_mat_compute_stats: \n");
     ip_mat *aa = ip_mat_create(2, 2, 3, 3.0f);
     ip_mat *bb = ip_mat_create(2, 2, 3, 6.0f);
@@ -144,10 +145,12 @@ int main () {
     printf("\n\nSOMMA:\n");
     ip_mat_show(cc);
     ip_mat_show_stats(cc);
+    ip_mat_free(cc);
     ip_mat_free(aa);
     ip_mat_free(bb);
-    ip_mat_free(cc);
-
+    
+    
+    
     printf("\n TEST ip_mat_copy: \n");
     ip_mat *a01 = ip_mat_create(3, 3, 3, 2.445f);
     set_val(a01, 1, 1, 1, 300.0f);
@@ -273,6 +276,21 @@ int main () {
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
+
+
+    printf("\n TEST convoluzione gaussian image: \n");
+    caf = bm_load("caf.bmp");
+    ip_mat *caf_nogauss = bitmap_to_ip_mat(caf);
+    ip_mat *ker_gauss= create_gaussian_filter(7,7,3,3);
+    ip_mat *caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
+    rescale(caf_gauss, 255.0f);
+    bbmp = ip_mat_to_bitmap(caf_gauss);
+    bm_save(bbmp, "caf_gauss.bmp");
+    bm_free(caf);
+    bm_free(bbmp);
+    ip_mat_free(caf_nogauss);
+    ip_mat_free(caf_gauss);
+    ip_mat_free(ker_gauss);    
 
     return 0;
 }

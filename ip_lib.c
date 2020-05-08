@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "ip_lib.h"
 #include "bmp.h"
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 void ip_mat_show(ip_mat *t)
@@ -136,7 +137,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat-> w = w;
     mat-> h = h;
     mat-> k = k;
-    mat->stat = (stats *) malloc(sizeof(stats));
+    mat->stat = (stats *) malloc(sizeof(stats)*k);
     if(!mat->stat) exit(1);
     mat->data = (float *)malloc(sizeof(float)*h*w*k);
     if(!mat->data) exit(1);
@@ -565,12 +566,13 @@ void rescale(ip_mat *t, float new_max)
     if(t)
     {
         int ih, iw, ik;
+        compute_stats(t);
         for (ih = 0; ih < t->h; ih++)
         {
             for (iw = 0; iw < t->w; iw++)
                 for (ik = 0; ik < t->k; ik++)
                 {
-                    float v_a = get_val(t, ih, iw, ik) * new_max;
+                    float v_a = (get_val(t, ih, iw, ik) - t->stat[ik].min)/(t->stat[ik].max - t->stat[ik].min) * new_max;
                     set_val(t, ih, iw, ik, v_a);
                 }
         }
@@ -627,16 +629,65 @@ ip_mat *create_average_filter(int w, int h, int k)
     return filter;
 }
 
+ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
+    int cx, cy;
+    int ih, iw, ik, dx, dy;
+    float val, acc;
+    ip_mat *filter = ip_mat_create(h, w, k, 0);
+    ip_mat * filter1;
+    cx = (w-1)/2;
+    cy = (h-1)/2;
+    acc = 0;
+    for(ih=0; ih<w; ih++){
+        dx = ih-cx;
+        for(iw = 0; iw<h; iw++){
+            dy = iw-cy;
+            val = (1/(2*M_PI*sigma*sigma))*pow(M_E,(-(dx*dx+dy*dy)/(2*sigma*sigma)));
+            for (ik=0; ik<k; ik++){
+                set_val(filter, ih, iw, ik, val);
+                acc +=val;
+            }
+        }
+    }    
+    filter1 = ip_mat_mul_scalar(filter, 1/acc);
+    ip_mat_free(filter);
+    return filter1;
+}
+
 /* --- Function implemented by our group --- */
 
 /*
+   *** PARTE1 ***
+
+   ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v);
+
+   void ip_mat_free(ip_mat *a);
+
+   float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k);
+
+   void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v);
+
    void compute_stats(ip_mat *t);
+
+   void ip_mat_init_random(ip_mat *t, float mean, float var);
 
    ip_mat *ip_mat_copy(ip_mat *in);
 
+   ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end);
+
    ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione);
 
+   ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b);
+
+   ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b);
+
+   ip_mat *ip_mat_mul_scalar(ip_mat *a, float c);
+
    ip_mat *ip_mat_add_scalar(ip_mat *a, float c);
+
+   ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b);
+   
+   *** PARTE 2 ***
 
    ip_mat *ip_mat_to_gray_scale(ip_mat *in);
 
@@ -650,6 +701,10 @@ ip_mat *create_average_filter(int w, int h, int k)
 
    ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w);
 
+   *** PARTE3 ***
+
+   ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f);
+
    ip_mat *create_sharpen_filter();
 
    ip_mat *create_edge_filter();
@@ -659,6 +714,8 @@ ip_mat *create_average_filter(int w, int h, int k)
    ip_mat *create_average_filter(int w, int h, int k);
 
    ip_mat *create_gaussian_filter(int w, int h, int k, float sigma);
+
+   ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w);
 
    void rescale(ip_mat *t, float new_max);
 
