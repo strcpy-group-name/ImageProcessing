@@ -617,7 +617,16 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                 }
         }
         ip_mat_free(pad_a);
-        rescale(mat, 255.0f);
+        compute_stats(mat);
+        int i, fuori = 0;
+        while(i < mat->k && !fuori)
+        {
+            if(mat->stat[i].min < 0.f || mat->stat[i].max > 255.f)
+                fuori++;
+            i++;
+        }
+        if(fuori)
+            rescale(mat, 255.0f);
         return mat;
     }
     else
@@ -652,8 +661,8 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
     }   
     filter1 = ip_mat_mul_scalar(filter, 1/acc);
     ip_mat_free(filter);
-    rescale(filter1, 255.0f);
-    clamp(filter1, 0.0f, 255.0f);
+    rescale(filter1, 255.f);
+    clamp(filter1, 0.f, 255.f);
     return filter1;
 }
 
@@ -674,7 +683,18 @@ ip_mat *create_sharpen_filter()
 
 ip_mat *create_emboss_filter()
 {
-    return NULL;
+    ip_mat *filter = ip_mat_create(3,3,3,1.f);
+    int i;
+    for(i = 0; i < 3; i++)
+    {
+        set_val(filter,0,0,i, -2.f);
+        set_val(filter,2,2,i, 2.f);
+        set_val(filter,0,1,i, -1.f);
+        set_val(filter,1,0,i, -1.f);
+        set_val(filter,0,2,i, 0.f);
+        set_val(filter,2,0,i, 0.f);
+    }
+    return filter;
 }
 
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
