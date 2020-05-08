@@ -311,6 +311,15 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
     return NULL;
 }
 
+/*** PARTE 2 ****/
+
+ip_mat *ip_mat_brighten(ip_mat *a, float bright)
+{
+    ip_mat *mat = ip_mat_add_scalar(a, bright);
+    ip_mat_adjust_to_rgb(mat);
+    return mat;
+}
+
 /**** PARTE 3 ****/
 
 ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
