@@ -311,48 +311,15 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
         return NULL;
 }
 
-/* PARTE 2 */
-
-void clamp(ip_mat *a, float low, float high)
-{
-    int ih, iw, ik,i;
-    for(i = 0; i< a->h * a->w * a->k; i++)
-    {
-        ik = i % a->k;
-        iw = (i / a->k) % a->w;
-        ih = i /(a->w * a->k);
-
-        float v_a = get_val(a, ih, iw, ik);
-        if(v_a > high) 
-            v_a = high;
-        if(v_a < low) 
-            v_a = low;
-        set_val(a, ih, iw, ik, v_a);
-    }
-}
+/**** PARTE 2 ****/
 
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     ip_mat *mat = ip_mat_add_scalar(a, bright);
-    clamp(mat, 0.0f, 255.0f); 
+    clamp(mat, 0, 255); 
     return mat;
 }
 
-void rescale(ip_mat *a, float maxval)
-{
-    if(a)
-    {
-        int ih, iw, ik, i;
-        for (i = 0; i < a->k * a->w * a->h; i++)
-        {
-            ik = i % a->k;
-            iw = (i / a->k) % a->w;
-            ih = i / (a->w * a->k);
-            float v_a = get_val(a, ih, iw, ik) * maxval;
-            set_val(a, ih, iw, ik, v_a);
-        }
-    }
-}
 
 ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 {
@@ -368,7 +335,6 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
     }
     return NULL;
 }
-
 
 ip_mat *ip_mat_to_gray_scale(ip_mat *in){
     int ih, iw, ik, i;
@@ -435,25 +401,61 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
     return gray;
 }
 
+/**** PARTE 3 ****/
+
 ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
 {
     if(a)
     {
         ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
 
-        int ih, iw, ik, i;
-        for(i = 0; i < a->h * a->w * a->k; i++)
+        int ih, iw, ik;
+        for (ih = 0; ih < a->h; ih++)
         {
-            iw = (i / a->k) % a->w;
-            ih = i / (a->w * a->k);
-            ik = i % a->k;
-            float v_a = get_val(a, ih, iw, ik);
-            set_val(nuova, ih + pad_h, iw + pad_w, ik, v_a);
+            for (iw = 0; iw < a->w; iw++)
+                for (ik = 0; ik < a->k; ik++)
+                {
+                    float v_a = get_val(a, ih, iw, ik);
+                    set_val(nuova, ih+pad_h, iw+pad_w, ik, v_a);
+                }
         }
         return nuova;
     }
     else
         return NULL;
+}
+
+void clamp(ip_mat *t, float low, float high)
+{
+    int ih, iw, ik;
+    for (ih = 0; ih < t->h; ih++)
+    {
+        for (iw = 0; iw < t->w; iw++)
+            for (ik = 0; ik < t->k; ik++)
+            {
+                float v_a = get_val(t, ih, iw, ik);
+                if(v_a > high) v_a = high;
+                if(v_a < low) v_a = low;
+                set_val(t, ih, iw, ik, v_a);
+            }
+    }
+}
+
+void rescale(ip_mat *t, float new_max)
+{
+    if(t)
+    {
+        int ih, iw, ik;
+        for (ih = 0; ih < t->h; ih++)
+        {
+            for (iw = 0; iw < t->w; iw++)
+                for (ik = 0; ik < t->k; ik++)
+                {
+                    float v_a = get_val(t, ih, iw, ik) * new_max;
+                    set_val(t, ih, iw, ik, v_a);
+                }
+        }
+    }
 }
 
 float calculate_convolution(ip_mat *a, ip_mat *ker, int i ,int j, int k)
@@ -503,15 +505,6 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 ip_mat *create_average_filter(int w, int h, int k)
 {
     ip_mat *filter = ip_mat_create(h, w, k, 1/(float)(w*h));
-    return filter;
-}
-
-ip_mat *create_edge_filter()
-{
-    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
-    set_val(filter, 1, 1, 0, 8.0f);
-    set_val(filter, 1, 1, 1, 8.0f);
-    set_val(filter, 1, 1, 2, 8.0f);
     return filter;
 }
 
