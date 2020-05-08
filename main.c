@@ -139,13 +139,13 @@ int main () {
     ip_mat_free(d);
     ip_mat_free(e);
 
-    /*
+    
     printf("\nTest ip_mat_brighten\n");
-    Bitmap *image = bm_load("cat1.bmp");
+    Bitmap *image = bm_load("flower.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
     ip_mat *bright = ip_mat_brighten(img, 100.0f);
     Bitmap *bbmp = ip_mat_to_bitmap(bright);
-    bm_save(bbmp, "cat1_b.bmp");
+    bm_save(bbmp, "flower_b.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(bright);
@@ -153,8 +153,8 @@ int main () {
     
     
     printf("\ntest ip_mat_blend\n");
-    Bitmap *im1 = bm_load("cat1.bmp");
-    Bitmap *im2 = bm_load("cat2.bmp");
+    Bitmap *im1 = bm_load("flower2.bmp");
+    Bitmap *im2 = bm_load("mongolfiere.bmp");
     ip_mat *b1 = bitmap_to_ip_mat(im1);
     ip_mat *b2 = bitmap_to_ip_mat(im2); 
     ip_mat *blend = ip_mat_blend(b1, b2, 0.5f);
@@ -167,18 +167,17 @@ int main () {
     bm_free(im2);
     bm_free(b3);
     
-    
     printf("\nTest ip_mat_to_gray\n");
-    Bitmap *g_original_bmp = bm_load("leaf.bmp");
+    Bitmap *g_original_bmp = bm_load("flower.bmp");
     ip_mat *g_original = bitmap_to_ip_mat(g_original_bmp);
     ip_mat *gray = ip_mat_to_gray_scale(g_original);
     Bitmap *gray_bmp = ip_mat_to_bitmap(gray);
-    bm_save(gray_bmp, "leaf_gray.bmp");
+    bm_save(gray_bmp, "flower_gray.bmp");
     bm_free(g_original_bmp);
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
-    */ 
+     
 
     return 0;
 }
