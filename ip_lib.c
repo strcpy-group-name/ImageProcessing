@@ -121,9 +121,9 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (a && i < a->h && j < a->w && k < a->k)
-    { /* j>=0 and k>=0 and i>=0 is non sense*/
+    { 
         int index = k + j * a->k + i * a->k * a->w;
-        return a->data[index];    /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        return a->data[index];    
     }
     else
     {
@@ -137,9 +137,9 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 {
     if (a && i < a->h && j < a->w && k < a->k)
     {
-        /*int index = k + j * a->w + i * a->k * a->w;*/
+        
         int index = k + j * a->k + i * a->k * a->w;
-        a->data[index] = v;      /* modificato per linearizzazione da data[i][j][k] a quello attuale*/
+        a->data[index] = v;      
     }
     else
     {
