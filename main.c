@@ -143,7 +143,7 @@ int main () {
     printf("\nTest ip_mat_brighten\n");
     Bitmap *image = bm_load("cat1.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
-    ip_mat *bright = ip_mat_brighten(img, -100.0f);
+    ip_mat *bright = ip_mat_brighten(img, 100.0f);
     Bitmap *bbmp = ip_mat_to_bitmap(bright);
     bm_save(bbmp, "cat1_b.bmp");
     bm_free(image);

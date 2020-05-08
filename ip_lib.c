@@ -374,26 +374,28 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
 
 /* PARTE 2 */
 
-void ip_mat_adjust_to_rgb(ip_mat *a)
+void clamp(ip_mat *a, float low, float high)
 {
-    int ih, iw, ik;
-    for (ih = 0; ih < a->h; ih++)
+    int ih, iw, ik,i;
+    for(i = 0; i< a->h * a->w * a->k; i++)
     {
-        for (iw = 0; iw < a->w; iw++)
-            for (ik = 0; ik < a->k; ik++)
-            {
-                float v_a = get_val(a, ih, iw, ik);
-                if(v_a > 255) v_a = 255;
-                if(v_a < 0) v_a = 0;
-                set_val(a, ih, iw, ik, v_a);
-            }
+        ik = i % a->k;
+        iw = (i / a->k) % a->w;
+        ih = i /(a->w * a->k);
+
+        float v_a = get_val(a, ih, iw, ik);
+        if(v_a > high) 
+            v_a = high;
+        if(v_a < low) 
+            v_a = low;
+        set_val(a, ih, iw, ik, v_a);
     }
 }
 
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     ip_mat *mat = ip_mat_add_scalar(a, bright);
-    ip_mat_adjust_to_rgb(mat); 
+    clamp(mat, 0.0f, 255.0f); 
     return mat;
 }
 
