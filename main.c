@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include "ip_lib.h"
 
-int main () {
-    /*
+int main()
+{
+    /* VARIABILI RICICLABILI NEI TEST*/
+    /* indici e acc da poter usare per cicli vari nei test*/
     int ih, iw, ik;
     int acc;
     int val; 
@@ -11,24 +13,24 @@ int main () {
 
     printf("\n TEST ip_mat_create \n");
     ip_mat *mat1;
-    h=5;
-    w=6;
-    k=3;
+    h = 5;
+    w = 6;
+    k = 3;
     val = 2;
     printf("\n Matrice A %d x %d x %d : \n", h, w, k);
     mat1 = ip_mat_create(h, w, k, val);
     ip_mat_show(mat1);
 
     printf("\n TEST set_val \n");
-    set_val(mat1, 0,1,1,2);
-    set_val(mat1, 0,1,2,4);
-    set_val(mat1, 0,0,0,3);
-    set_val(mat1, 3,4,2,7);
+    set_val(mat1, 0, 1, 1, 2);
+    set_val(mat1, 0, 1, 2, 4);
+    set_val(mat1, 0, 0, 0, 3);
+    set_val(mat1, 3, 4, 2, 7);
     printf("\n Matrice A modificata con set: \n");
     ip_mat_show(mat1);
 
     printf("\n TEST get_val \n");
-    printf("\n get val(3,4,2): %f\n", get_val(mat1, 3,4,2));
+    printf("\n get val(3,4,2): %f\n", get_val(mat1, 3, 4, 2));
 
     printf("\n TEST ip_mat_init_random \n");
     ip_mat_init_random(mat1, 1, 1);
@@ -40,22 +42,22 @@ int main () {
     ip_mat_free(mat1);
 
     printf("\n TEST ip_mat_subset \n");
-    ip_mat *mat2, *subset;    
+    ip_mat *mat2, *subset;
 
     h = 5;
     w = 6;
     k = 3;
     acc = 0;
     mat2 = ip_mat_create(h, w, k, 0);
-    for (ih = 0; ih<h; ih++)
-        for(iw = 0; iw< w; iw++)
-            for(ik=0; ik<k; ik++, acc++)
-                set_val(mat2,ih,iw,ik,acc);
+    for (ih = 0; ih < h; ih++)
+        for (iw = 0; iw < w; iw++)
+            for (ik = 0; ik < k; ik++, acc++)
+                set_val(mat2, ih, iw, ik, acc);
 
     printf("\n Matrice A: \n");
     ip_mat_show(mat2);
 
-    subset = ip_mat_subset(mat2, 2,4,1,4);
+    subset = ip_mat_subset(mat2, 2, 4, 1, 4);
     printf("\n Matrice subset di A: \n");
     ip_mat_show(subset);
 
@@ -64,15 +66,15 @@ int main () {
 
     printf("\n TEST ip_mat_sum: \n");
     ip_mat *sum, *add1, *add2;
-    
+
     h = 4;
     w = 2;
     k = 3;
 
-    add1 = ip_mat_create(h,w,k,2);
-    add2 = ip_mat_create(h,w,k,5);
+    add1 = ip_mat_create(h, w, k, 2);
+    add2 = ip_mat_create(h, w, k, 5);
     sum = ip_mat_sum(add1, add2);
-    
+
     printf("\n A: \n");
     ip_mat_show(add1);
 
@@ -86,21 +88,20 @@ int main () {
 
     printf("\n TEST ip_mat_sub: \n");
     ip_mat *sub;
-    
+
     sub = ip_mat_sub(add1, add2);
 
-    
     printf("\n A - B: \n");
     ip_mat_show(sub);
     printf("\n");
-   
+
     ip_mat_free(sub);
     ip_mat_free(add1);
     ip_mat_free(add2);
 
     printf("\n TEST ip_mat_mean: \n");
-    ip_mat* a = ip_mat_create(2,2,3,6.0f);
-    ip_mat* b = ip_mat_create(2,2,3,3.0f);
+    ip_mat *a = ip_mat_create(2, 2, 3, 6.0f);
+    ip_mat *b = ip_mat_create(2, 2, 3, 3.0f);
 
     ip_mat *c = ip_mat_mean(a, b);
 
@@ -110,7 +111,7 @@ int main () {
     ip_mat_show(b);
     printf("\n Media di A e B\n");
     ip_mat_show(c);
-    
+
     ip_mat_free(a);
     ip_mat_free(b);
     ip_mat_free(c);
@@ -126,10 +127,52 @@ int main () {
 
     ip_mat_free(d);
     ip_mat_free(e);
-    */
 
-   /*
-    
+    /*Test somma e show_stats/compute_stats*/
+    ip_mat *aa = ip_mat_create(2, 2, 3, 3.0f);
+    ip_mat *bb = ip_mat_create(2, 2, 3, 6.0f);
+    set_val(aa, 1, 1, 1, 300.0f);
+    ip_mat *cc = ip_mat_sum(aa, bb);
+    printf("\n\nSOMMA:\n");
+    ip_mat_show(cc);
+    ip_mat_show_stats(cc);
+    ip_mat_free(aa);
+    ip_mat_free(bb);
+    ip_mat_free(cc);
+
+    /*Test ip_mat_copy*/
+    printf("\n\nTest ip_mat_copy\n");
+    ip_mat *a01 = ip_mat_create(3, 3, 3, 2.445f);
+    set_val(a01, 1, 1, 1, 300.0f);
+    ip_mat *a02 = ip_mat_copy(a01);
+    printf("\nmatrice a1:");
+    ip_mat_show(a01);
+    printf("\nmatrice a2:");
+    ip_mat_show(a02);
+    ip_mat_free(a01);
+    ip_mat_free(a02);
+
+    /*Test ip_mat_concat*/
+    printf("\n\nTest ip_mat_concat\n");
+    ip_mat *a03 = ip_mat_create(3, 3, 3, 1.1f);
+    ip_mat *a04 = ip_mat_create(3, 3, 3, 2.2f);
+    set_val(a04, 1, 1, 1, 4.0f);
+    ip_mat *a05 = ip_mat_concat(a03, a04, 0);
+    printf("\nmatrice a05\n");
+    ip_mat_show(a05);
+    ip_mat *a06 = ip_mat_concat(a03, a04, 1);
+    printf("\nmatrice a06\n");
+    ip_mat_show(a06);
+    ip_mat *a07 = ip_mat_concat(a03, a04, 2);
+    printf("\nmatrice a07\n");
+    ip_mat_show(a07);
+    ip_mat_free(a03);
+    ip_mat_free(a04);
+    ip_mat_free(a05);
+    ip_mat_free(a06);
+    ip_mat_free(a07);
+
+    /*
     printf("\nTest ip_mat_brighten\n");
     Bitmap *image = bm_load("fiori.bmp");
     ip_mat *img = bitmap_to_ip_mat(image);
@@ -168,8 +211,6 @@ int main () {
     bm_free(gray_bmp);
     ip_mat_free(gray);
     ip_mat_free(g_original);
-
-    */
     
     
     printf("\nTest ip_mat_to_gray_lum_corr\n");
@@ -184,7 +225,6 @@ int main () {
     ip_mat_free(gl_original);
     
 
-/*
     printf("\nTest ip_mat_to_gray_scale_gamma_corr\n");
     Bitmap *gg_original_bmp = bm_load("image.bmp");
     ip_mat *gg_original = bitmap_to_ip_mat(gg_original_bmp);
@@ -201,4 +241,3 @@ int main () {
 
     return 0;
 }
-
