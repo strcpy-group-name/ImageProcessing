@@ -27,22 +27,21 @@ void ip_mat_show(ip_mat *t)
 }
 
 /* DA IMPLEMENTARE O DÀ ERRORE */
-/*
-   void ip_mat_show_stats(ip_mat *t)
-   {
-   unsigned int k;
 
-   compute_stats(t);
+void ip_mat_show_stats(ip_mat *t)
+{
+    unsigned int k;
 
-   for (k = 0; k < t->k; k++)
-   {
-   printf("Channel %d:\n", k);
-   printf("\t Min: %f\n", t->stat[k].min);
-   printf("\t Max: %f\n", t->stat[k].max);
-   printf("\t Mean: %f\n", t->stat[k].mean);
-   }
-   }
-   */
+    compute_stats(t);
+
+    for (k = 0; k < t->k; k++)
+    {
+        printf("Channel %d:\n", k);
+        printf("\t Min: %f\n", t->stat[k].min);
+        printf("\t Max: %f\n", t->stat[k].max);
+        printf("\t Mean: %f\n", t->stat[k].mean);
+    }
+}
 
 ip_mat *bitmap_to_ip_mat(Bitmap *img)
 {
@@ -306,6 +305,126 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
             set_val(mat, ih, iw, ik, sum);
         } 
         return mat;
+    }
+    else
+        return NULL;
+}
+
+void compute_stats(ip_mat *t)
+{
+    int ih, iw, ik;
+    for (ik = 0; ik < t->k; ik++) /*Per ogni canale calcolo e scrivo le statistiche*/
+    {
+        float min = get_val(t, 0, 0, ik);
+        float max = get_val(t, 0, 0, ik);
+        float tot = 0;
+        int nElem = 0;
+        for (ih = 0; ih < t->h; ih++)
+        {
+            for (iw = 0; iw < t->w; iw++)
+            {
+                float current = get_val(t, ih, iw, ik);
+                if (current < min)
+                    min = current;
+                if (current > max)
+                    max = current;
+                tot += current;
+                nElem++;
+            }
+        }
+        t->stat[ik].min = min;
+        t->stat[ik].max = max;
+        t->stat[ik].mean = tot / nElem;
+    }
+}
+
+ip_mat *ip_mat_copy(ip_mat *in)
+{
+    int h = in->h;
+    int w = in->w;
+    int k = in->k;
+    int ih, iw, ik;
+    ip_mat *new = ip_mat_create(h, w, k, 0);
+    for (ih = 0; ih < h; ih++)
+    {
+        for (iw = 0; iw < w; iw++)
+        {
+            for (ik = 0; ik < k; ik++)
+            {
+                float current = get_val(in, ih, iw, ik);
+                set_val(new, ih, iw, ik, current);
+            }
+        }
+    }
+    return new;
+}
+
+ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
+{
+    int ih, iw, ik;
+    if (dimensione == 0)
+    {
+        int ah = a->h;
+        printf("somma h: %d", a->h + b->h);
+        ip_mat *new = ip_mat_create(a->h + b->h, b->w, b->k, 0);
+        for (ih = 0; ih < a->h + b->h; ih++)
+        {
+            for (iw = 0; iw < b->h; iw++)
+            {
+                for (ik = 0; ik < b->k; ik++)
+                {
+                    float current = 0;
+                    if (ih < ah)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih - ah, iw, ik);
+                    set_val(new, ih, iw, ik, current);
+                }
+            }
+        }
+        return new;
+    }
+    else if (dimensione == 1)
+    {
+        int aw = a->w;
+        ip_mat *new = ip_mat_create(b->h, aw + b->w, b->k, 0);
+        for (ih = 0; ih < b->h; ih++)
+        {
+            for (iw = 0; iw < aw + b->h; iw++)
+            {
+                for (ik = 0; ik < b->k; ik++)
+                {
+                    float current;
+                    if (iw < aw)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih, iw - aw, ik);
+                    set_val(new, ih, iw, ik, current);
+                }
+            }
+        }
+        return new;
+    }
+    else if (dimensione == 2)
+    {
+        int ak = a->k;
+        ip_mat *new = ip_mat_create(b->h, b->w, ak + b->k, 0);
+        for (ih = 0; ih < b->h; ih++)
+        {
+            for (iw = 0; iw < b->w; iw++)
+            {
+                for (ik = 0; ik < ak + b->k; ik++)
+                {
+                    float current;
+                    if (ik < ak)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih, iw, ik - ak);
+                    set_val(new, ih, iw, ik, current);
+                }
+            }
+        }
+        return new;
     }
     else
         return NULL;
