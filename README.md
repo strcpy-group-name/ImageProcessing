@@ -37,3 +37,4 @@ TODO:
 	- [X] Normalizzazione
 		- [X] Rescale
 		- [X] Clamp
+		- [X] Padding
