@@ -677,22 +677,32 @@ ip_mat *create_edge_filter()
 
 ip_mat *create_sharpen_filter()
 {
-    return NULL;
+    ip_mat *filter = ip_mat_create(3, 3, 3, -1.f);
+    int i;
+    for (i = 0; i < 3; i++)
+    {
+        set_val(filter, 0, 0, i, 0.f);
+        set_val(filter, 2, 2, i, 0.f);
+        set_val(filter, 0, 2, i, 0.f);
+        set_val(filter, 1, 1, i, 5.f);
+        set_val(filter, 2, 0, i, 0.f);
+    }
+    return filter;
 }
 
 
 ip_mat *create_emboss_filter()
 {
-    ip_mat *filter = ip_mat_create(3,3,3,1.f);
+    ip_mat *filter = ip_mat_create(3, 3, 3, 1.f);
     int i;
-    for(i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
     {
-        set_val(filter,0,0,i, -2.f);
-        set_val(filter,2,2,i, 2.f);
-        set_val(filter,0,1,i, -1.f);
-        set_val(filter,1,0,i, -1.f);
-        set_val(filter,0,2,i, 0.f);
-        set_val(filter,2,0,i, 0.f);
+        set_val(filter, 0, 0, i, -2.f);
+        set_val(filter, 2, 2, i, 2.f);
+        set_val(filter, 0, 1, i, -1.f);
+        set_val(filter, 1, 0, i, -1.f);
+        set_val(filter, 0, 2, i, 0.f);
+        set_val(filter, 2, 0, i, 0.f);
     }
     return filter;
 }
