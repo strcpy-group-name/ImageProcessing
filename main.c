@@ -164,13 +164,13 @@ int main()
     ip_mat *a04 = ip_mat_create(3, 3, 3, 2.2f);
     set_val(a04, 1, 1, 1, 4.0f);
     ip_mat *a05 = ip_mat_concat(a03, a04, 0);
-    printf("\nmatrice a05\n");
+    printf("\nmatrice a05 altezza\n");
     ip_mat_show(a05);
     ip_mat *a06 = ip_mat_concat(a03, a04, 1);
-    printf("\nmatrice a06\n");
+    printf("\nmatrice a06 largezza\n");
     ip_mat_show(a06);
     ip_mat *a07 = ip_mat_concat(a03, a04, 2);
-    printf("\nmatrice a07\n");
+    printf("\nmatrice a07 canali\n");
     ip_mat_show(a07);
     ip_mat_free(a03);
     ip_mat_free(a04);
