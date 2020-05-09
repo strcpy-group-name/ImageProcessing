@@ -540,7 +540,7 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
 {
     ip_mat *mat_rand = ip_mat_create(a->h, a->w, a->k, 0.0f);
-    ip_mat *new = ip_mat_create(a->h, a->w, a->k, 1.0f);
+    ip_mat *new = ip_mat_create(a->h, a->w, a->k, 0.0f);
     ip_mat_init_random(mat_rand, 0.0f, 1.0f); //0,1
     ip_mat_mul_scalar(mat_rand, amount);
     new = ip_mat_sum(a, mat_rand);
