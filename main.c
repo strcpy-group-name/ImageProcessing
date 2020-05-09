@@ -280,7 +280,7 @@ int main () {
     printf("\n TEST convoluzione gaussian image: \n");
     caf = bm_load("flower.bmp");
     ip_mat *caf_nogauss = bitmap_to_ip_mat(caf);
-    ip_mat *ker_gauss = create_gaussian_filter(5,5,3,5.0f);
+    ip_mat *ker_gauss = create_gaussian_filter(3,3,3,5.0f);
     ip_mat *caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
     clamp(caf_gauss, 0.0f, 255.0f);
     bbmp = ip_mat_to_bitmap(caf_gauss);

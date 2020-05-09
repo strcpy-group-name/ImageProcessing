@@ -611,13 +611,11 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     {
         int padh_amt = (f->h - 1) / 2;
         int padw_amt = (f->w - 1) / 2;
-        /*int i = 0, fuori = 0;*/
+        int i = 0, found = 0;
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
         int ih, iw, ik;
         
-        compute_stats(a);
-
         for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
             for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
@@ -628,6 +626,18 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                 }
         }
         ip_mat_free(pad_a);
+        compute_stats(f);
+
+        while(i < f->k && !found)
+        {
+            if(f->stat[i]->max < 1)
+            {
+                rescale(mat, 255.0f);
+                found = 1;
+            }
+            i++;
+        }
+        
         return mat;
     }
     else
