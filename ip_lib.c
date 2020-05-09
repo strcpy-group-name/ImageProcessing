@@ -38,9 +38,9 @@ void ip_mat_show_stats(ip_mat *t)
     for (k = 0; k < t->k; k++)
     {
         printf("Channel %d:\n", k);
-        printf("\t Min: %f\n", t->stat[k].min);
-        printf("\t Max: %f\n", t->stat[k].max);
-        printf("\t Mean: %f\n", t->stat[k].mean);
+        printf("\t Min: %f\n", t->stat[k]->min);
+        printf("\t Max: %f\n", t->stat[k]->max);
+        printf("\t Mean: %f\n", t->stat[k]->mean);
     }
 }
 
@@ -137,7 +137,12 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     mat-> w = w;
     mat-> h = h;
     mat-> k = k;
-    mat->stat = (stats *) malloc(sizeof(stats)*k);
+    mat->stat = (stats **) malloc(sizeof(stats*)*k);
+
+    for(i = 0; i < k; i++)
+        mat->stat[i] = (stats*)malloc(sizeof(stats));
+
+
     if(!mat->stat) exit(1);
     mat->data = (float *)malloc(sizeof(float)*h*w*k);
     if(!mat->data) exit(1);
@@ -156,7 +161,11 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 
 void ip_mat_free(ip_mat *a)
 {
+    int i;
     free(a->data);
+    for(i = 0; i < a->k; i++)
+        if(a->stat[i])
+            free(a->stat[i]);
     free(a->stat);
     free(a);
 }
@@ -333,9 +342,9 @@ void compute_stats(ip_mat *t)
                 nElem++;
             }
         }
-        t->stat[ik].min = min;
-        t->stat[ik].max = max;
-        t->stat[ik].mean = tot / nElem;
+        t->stat[ik]->max = max;
+        t->stat[ik]->min = min;
+        t->stat[ik]->mean = tot / nElem;
     }
 }
 
@@ -572,7 +581,7 @@ void rescale(ip_mat *t, float new_max)
             for (iw = 0; iw < t->w; iw++)
                 for (ik = 0; ik < t->k; ik++)
                 {
-                    float v_a = (get_val(t, ih, iw, ik) - t->stat[ik].min)/(t->stat[ik].max - t->stat[ik].min) * new_max;
+                    float v_a = (get_val(t, ih, iw, ik) - t->stat[ik]->min)/(t->stat[ik]->max - t->stat[ik]->min) * new_max;
                     set_val(t, ih, iw, ik, v_a);
                 }
         }
@@ -602,11 +611,13 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     {
         int padh_amt = (f->h - 1) / 2;
         int padw_amt = (f->w - 1) / 2;
-
+        /*int i = 0, fuori = 0;*/
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
-
         int ih, iw, ik;
+        
+        compute_stats(a);
+
         for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
             for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
@@ -617,16 +628,6 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                 }
         }
         ip_mat_free(pad_a);
-        compute_stats(mat);
-        int i, fuori = 0;
-        while(i < mat->k && !fuori)
-        {
-            if(mat->stat[i].min < 0.f || mat->stat[i].max > 255.f)
-                fuori++;
-            i++;
-        }
-        if(fuori)
-            rescale(mat, 255.0f);
         return mat;
     }
     else
@@ -661,8 +662,6 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
     }   
     filter1 = ip_mat_mul_scalar(filter, 1/acc);
     ip_mat_free(filter);
-    rescale(filter1, 255.f);
-    clamp(filter1, 0.f, 255.f);
     return filter1;
 }
 

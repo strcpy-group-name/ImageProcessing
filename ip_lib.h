@@ -26,7 +26,7 @@ typedef struct
     unsigned int w; /* <- larghezza */
     unsigned int h; /* <- altezza */
     unsigned int k; /* <- canali */
-    stats *stat;    /* <- statistiche per canale */
+    stats **stat;    /* <- statistiche per canale */
     float *data;  /* <- matrice 3D di valori float, modificato da triplo a doppio x linearizzazione con 3 metodo*/
 } ip_mat;
 
