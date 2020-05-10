@@ -161,13 +161,16 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v)
 
 void ip_mat_free(ip_mat *a)
 {
-    int i;
-    free(a->data);
-    for (i = 0; i < a->k; i++)
-        if (a->stat[i])
-            free(a->stat[i]);
-    free(a->stat);
-    free(a);
+    if(a)
+    {
+        int i;
+        for (i = 0; i < a->k; i++)
+            if (a->stat[i])
+                free(a->stat[i]);
+        free(a->stat);
+        free(a->data);
+        free(a);
+    }
 }
 
 void ip_mat_init_random(ip_mat *t, float mean, float var)
@@ -695,6 +698,44 @@ ip_mat *create_edge_filter()
     set_val(filter, 1, 1, 1, 8.0f);
     set_val(filter, 1, 1, 2, 8.0f);
     return filter;
+}
+
+
+ip_mat *create_emboss_filter()
+{
+    ip_mat *filter = ip_mat_create(3, 3, 3, 1.0f);
+    int i;
+    for(i = 0; i < 3; i++)
+    {
+        set_val(filter, 0, 0, i, -2.0f);
+        set_val(filter, 1, 0, i, -1.0f);
+        set_val(filter, 0, 1, i, -1.0f);
+        set_val(filter, 0, 2, i, 0.0f);
+        set_val(filter, 2, 0, i, 0.0f);
+        set_val(filter, 2, 2, i, 2.0f);
+    }
+    return filter;
+}
+
+
+ip_mat *create_sharpen_filter()
+{
+    ip_mat *filter = ip_mat_create(3, 3, 3, 0.0f);
+    int i;
+    for(i = 0; i < 3; i++)
+    {
+        set_val(filter, 1, 0, i, -1.0f);
+        set_val(filter, 0, 1, i, -1.0f);
+        set_val(filter, 2, 1, i, -1.0f);
+        set_val(filter, 1, 2, i, -1.0f);
+        set_val(filter, 1, 1, i, 5.0f);
+    }
+    return filter;
+}
+
+ip_mat *ip_mat_corrupt(ip_mat *a, float amout)
+{
+    return NULL;
 }
 
 /* --- Function implemented by our group --- */

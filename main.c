@@ -311,5 +311,20 @@ int main()
     ip_mat_free(caf_gauss);
     ip_mat_free(ker_gauss);
 
+    printf("\n TEST convoluzione emboss image: \n");
+    caf = bm_load("fullmoon.bmp");
+    caf_nogauss = bitmap_to_ip_mat(caf);
+    ker_gauss = create_emboss_filter();
+    caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
+    clamp(caf_gauss, 0.0f, 255.0f);
+    bbmp = ip_mat_to_bitmap(caf_gauss);
+    bm_save(bbmp, "fullmoon_emboss.bmp");
+    bm_free(caf);
+    bm_free(bbmp);
+    ip_mat_free(caf_nogauss);
+    ip_mat_free(caf_gauss);
+    ip_mat_free(ker_gauss);
+
+
     return 0;
 }
