@@ -71,10 +71,7 @@ int main (int argc, char * argv[]) {
 
     bm_free(b); /* libera la memoria dalla bitmap, da qui in poi lavoriamo con ip_mat */
 
-    if (strcmp(operation, "corrupt") == 0) {
-        img = ip_mat_corrupt(input_img, k_size);  /* corrompi l'immagine con del rumore */
-    }
-    else if (strcmp(operation, "brighten") == 0) {
+    if (strcmp(operation, "brighten") == 0) {
         img = ip_mat_brighten(input_img, k_size); /* aumenta la luminosità */
         clamp(img,0,255); /* effettua il clamping dei valori in 0-255 */
     }
@@ -89,17 +86,8 @@ int main (int argc, char * argv[]) {
     }else if (strcmp(operation, "gray") == 0) {
         img = ip_mat_to_gray_scale(input_img);
     }
-    else if (strcmp(operation, "sharp") == 0) {
-        filter = create_sharpen_filter(); /* crea un filtro di sharpening */
-        img = ip_mat_convolve(input_img, filter); /* applica la convoluzione */
-        clamp(img,0,255);  /* effettua il clamping dei valori in 0-255 */
-    }
     else if (strcmp(operation, "edge") == 0) {
         filter = create_edge_filter();
-        img = ip_mat_convolve(input_img, filter);
-        clamp(img,0,255);
-    } else if (strcmp(operation, "emboss") == 0) {
-        filter = create_emboss_filter();
         img = ip_mat_convolve(input_img, filter);
         clamp(img,0,255);
     } else if (strcmp(operation, "avg") == 0) {
