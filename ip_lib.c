@@ -80,8 +80,8 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
         for (j = 0; j < t->w; j++) /* columns */
         {
             bm_set_pixel(b, j, i, (unsigned char)get_val(t, i, j, 0),
-                    (unsigned char)get_val(t, i, j, 1),
-                    (unsigned char)get_val(t, i, j, 2));
+                         (unsigned char)get_val(t, i, j, 1),
+                         (unsigned char)get_val(t, i, j, 2));
         }
     }
     return b;
@@ -90,9 +90,9 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (a && i < a->h && j < a->w && k < a->k)
-    { 
+    {
         int index = k + j * a->k + i * a->k * a->w;
-        return a->data[index];    
+        return a->data[index];
     }
     else
     {
@@ -106,9 +106,9 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 {
     if (a && i < a->h && j < a->w && k < a->k)
     {
-        
+
         int index = k + j * a->k + i * a->k * a->w;
-        a->data[index] = v;      
+        a->data[index] = v;
     }
     else
     {
@@ -119,8 +119,6 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     }
 }
 
-
-
 float get_normal_random()
 {
     float y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
@@ -129,25 +127,28 @@ float get_normal_random()
 }
 /* PARTE 1 */
 
-ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
+ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v)
+{
     ip_mat *mat;
     int ih, iw, ik, i;
     mat = (ip_mat *)malloc(sizeof(ip_mat));
-    if(!mat) exit(1);
-    mat-> w = w;
-    mat-> h = h;
-    mat-> k = k;
-    mat->stat = (stats **) malloc(sizeof(stats*)*k);
+    if (!mat)
+        exit(1);
+    mat->w = w;
+    mat->h = h;
+    mat->k = k;
+    mat->stat = (stats **)malloc(sizeof(stats *) * k);
 
-    for(i = 0; i < k; i++)
-        mat->stat[i] = (stats*)malloc(sizeof(stats));
+    for (i = 0; i < k; i++)
+        mat->stat[i] = (stats *)malloc(sizeof(stats));
 
+    if (!mat->stat)
+        exit(1);
+    mat->data = (float *)malloc(sizeof(float) * h * w * k);
+    if (!mat->data)
+        exit(1);
 
-    if(!mat->stat) exit(1);
-    mat->data = (float *)malloc(sizeof(float)*h*w*k);
-    if(!mat->data) exit(1);
-    
-    for(i = 0; i < w*h*k; i++)
+    for (i = 0; i < w * h * k; i++)
     {
         ik = i % k;
         iw = (i / k) % w;
@@ -158,21 +159,23 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     return mat;
 }
 
-
 void ip_mat_free(ip_mat *a)
 {
-    int i;
-    free(a->data);
-    for(i = 0; i < a->k; i++)
-        if(a->stat[i])
-            free(a->stat[i]);
-    free(a->stat);
-    free(a);
+    if(a)
+    {
+        int i;
+        for (i = 0; i < a->k; i++)
+            if (a->stat[i])
+                free(a->stat[i]);
+        free(a->stat);
+        free(a->data);
+        free(a);
+    }
 }
 
 void ip_mat_init_random(ip_mat *t, float mean, float var)
 {
-    if(t)
+    if (t)
     {
         int ih, iw, ik, i;
 
@@ -183,15 +186,16 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
             ih = i / (t->w * t->k);
 
             float random = get_normal_random();
-            float gaussian = (1 / sqrt(2 * PI * var * var)) * pow(E, -(((random - mean) * (random - mean)) / (2 * var * var)));
+            float gaussian = (1 / sqrt(2 * PI * var * var)) * exp(-(pow(random - mean, 2) / (2 * var * var)));
             set_val(t, ih, iw, ik, gaussian);
         }
     }
 }
 
-ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){
-    
-    if(t)
+ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end)
+{
+
+    if (t)
     {
         ip_mat *subset;
         int w, h, k;
@@ -215,8 +219,10 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
         return NULL;
 }
 
-ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b){
-    if(a && b && a->h == b->h && a->w == b->w && a->k == b->k){
+ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
+{
+    if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
+    {
         ip_mat *c;
         int ih, iw, ik, i;
 
@@ -229,15 +235,17 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b){
             ih = i / (a->w * a->k);
             float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
             set_val(c, ih, iw, ik, sum);
-        } 
+        }
         return c;
     }
     else
         return NULL;
 }
 
-ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b){
-    if(a && b && a->h == b->h && a->w == b->w && a->k == b->k){
+ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
+{
+    if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
+    {
         ip_mat *c;
         int ih, iw, ik, i;
 
@@ -250,7 +258,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b){
             ih = i / (a->w * a->k);
             float sum = get_val(a, ih, iw, ik) - get_val(b, ih, iw, ik);
             set_val(c, ih, iw, ik, sum);
-        } 
+        }
         return c;
     }
     else
@@ -260,7 +268,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b){
 ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 {
     /*TODO: in caso di matrici di dimensione diversa, estendere la matrice più piccola usando concat*/
-    if(a && b && a->h == b->h && a->w == b->w && a->k == b->k)
+    if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
     {
         int ih, iw, ik, i;
         ip_mat *c = ip_mat_create(a->h, a->w, a->k, 0);
@@ -270,8 +278,8 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
             iw = (i / a->k) % a->w;
             ih = i / (a->w * a->k);
             float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
-            set_val(c, ih, iw, ik, sum/2);
-        } 
+            set_val(c, ih, iw, ik, sum / 2);
+        }
         return c;
     }
     else
@@ -280,7 +288,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 
 ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
 {
-    if(a)
+    if (a)
     {
         int ih, iw, ik, i;
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
@@ -292,7 +300,7 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
             ih = i / (a->w * a->k);
             float sum = get_val(a, ih, iw, ik) * c;
             set_val(mat, ih, iw, ik, sum);
-        } 
+        }
         return mat;
     }
     else
@@ -301,7 +309,7 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
 
 ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
 {
-    if(a)
+    if (a)
     {
         int ih, iw, ik, i;
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
@@ -313,7 +321,7 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
             ih = i / (a->w * a->k);
             float sum = get_val(a, ih, iw, ik) + c;
             set_val(mat, ih, iw, ik, sum);
-        } 
+        }
         return mat;
     }
     else
@@ -379,7 +387,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
         ip_mat *new = ip_mat_create(a->h + b->h, b->w, b->k, 0);
         for (ih = 0; ih < a->h + b->h; ih++)
         {
-            for (iw = 0; iw < b->h; iw++)
+            for (iw = 0; iw < b->w; iw++)
             {
                 for (ik = 0; ik < b->k; ik++)
                 {
@@ -400,7 +408,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
         ip_mat *new = ip_mat_create(b->h, aw + b->w, b->k, 0);
         for (ih = 0; ih < b->h; ih++)
         {
-            for (iw = 0; iw < aw + b->h; iw++)
+            for (iw = 0; iw < aw + b->w; iw++)
             {
                 for (ik = 0; ik < b->k; ik++)
                 {
@@ -445,17 +453,16 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     ip_mat *mat = ip_mat_add_scalar(a, bright);
-    clamp(mat, 0, 255); 
+    clamp(mat, 0, 255);
     return mat;
 }
 
-
 ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 {
-    if(a && b)
+    if (a && b)
     {
-        ip_mat *m_a = ip_mat_mul_scalar(a, alpha/255.0f);
-        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha)/255.0f);
+        ip_mat *m_a = ip_mat_mul_scalar(a, alpha / 255.0f);
+        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha) / 255.0f);
         ip_mat *mat = ip_mat_sum(m_a, m_b);
         ip_mat_free(m_a);
         ip_mat_free(m_b);
@@ -465,76 +472,117 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
     return NULL;
 }
 
-ip_mat *ip_mat_to_gray_scale(ip_mat *in){
+ip_mat *ip_mat_to_gray_scale(ip_mat *in)
+{
     int ih, iw, ik, i;
-    
+
     float val;
     ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
-    for(i=0; i< in->h * in->w * in->k; i+=3)
+    for (i = 0; i < in->h * in->w * in->k; i += 3)
     {
         iw = (i / in->k) % in->w;
         ih = i / (in->w * in->k);
         ik = i % in->k;
-        val = (get_val(in, ih, iw, ik)
-                + get_val(in, ih, iw, ik+1)
-                + get_val(in, ih, iw, ik+2))/3;
-        
+        val = (get_val(in, ih, iw, ik) + get_val(in, ih, iw, ik + 1) + get_val(in, ih, iw, ik + 2)) / 3;
+
         set_val(gray, ih, iw, ik, val);
-        set_val(gray, ih, iw, ik+1, val);
-        set_val(gray, ih, iw, ik+2, val);
+        set_val(gray, ih, iw, ik + 1, val);
+        set_val(gray, ih, iw, ik + 2, val);
     }
-            
+
     return gray;
 }
 
-ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in){
-    int ih, iw, ik;  
+ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
+{
+    int ih, iw, ik;
     float r, g, b, val;
 
     ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
-    for(ih=0; ih<(in->h); ih++)
-        for(iw=0; iw<(in->w); iw++){
+    for (ih = 0; ih < (in->h); ih++)
+        for (iw = 0; iw < (in->w); iw++)
+        {
             r = get_val(in, ih, iw, 0);
             g = get_val(in, ih, iw, 1);
             b = get_val(in, ih, iw, 2);
-            val = 0.3*r + 0.59*g + 0.11*b;
-            for(ik=0; ik<(in->k); ik++)
+            val = 0.3 * r + 0.59 * g + 0.11 * b;
+            for (ik = 0; ik < (in->k); ik++)
                 set_val(gray, ih, iw, ik, val);
         }
     return gray;
 }
 
-
-float gamma_correction_exp_to_linear(float v){
+float gamma_correction_exp_to_linear(float v)
+{
     float c_srgb, c_linear;
-    c_srgb = v/255.0f;
-    c_linear = (c_srgb<=0.04045f)? c_srgb/12.92f: powf((c_srgb+0.055f)/1.055, 2.4);
+    c_srgb = v / 255.0f;
+    c_linear = (c_srgb <= 0.04045f) ? c_srgb / 12.92f : powf((c_srgb + 0.055f) / 1.055, 2.4);
     return c_linear;
 }
 
-ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in){
-    int ih, iw, ik;    
+ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
+{
+    int ih, iw, ik;
     float r_lin, g_lin, b_lin, y_lin, y_srgb;
 
     ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
-    for(ih=0; ih<(in->h); ih++)
-        for(iw=0; iw<(in->w); iw++){
+    for (ih = 0; ih < (in->h); ih++)
+        for (iw = 0; iw < (in->w); iw++)
+        {
             r_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 0));
             g_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 1));
             b_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 2));
-            y_lin = 0.2126*r_lin + 0.7152*g_lin + 0.0722*b_lin;
-            y_srgb = (y_lin<=0.0031308f)? 12.92f*y_lin : 1.055f*(powf(y_lin, 1.0f/2.4f)-0.055f);
-            for(ik=0; ik<in->k; ik++)
-                set_val(gray, ih, iw, ik, y_srgb*255.0f);
+            y_lin = 0.2126 * r_lin + 0.7152 * g_lin + 0.0722 * b_lin;
+            y_srgb = (y_lin <= 0.0031308f) ? 12.92f * y_lin : 1.055f * (powf(y_lin, 1.0f / 2.4f) - 0.055f);
+            for (ik = 0; ik < in->k; ik++)
+                set_val(gray, ih, iw, ik, y_srgb * 255.0f);
         }
     return gray;
+}
+
+int var(ip_mat *a, int k) 
+{ 
+    int sum = 0; 
+
+    ip_mat *temp = ip_mat_add_scalar(a, -a->stat[k]->mean);
+
+
+    for (int i = 0; i < a->h; i++) { 
+        for (int j = 0; j < a->w; j++) { 
+            set_val(temp, i, j, k, get_val(temp, i, j, k)*get_val(temp, i, j, k));
+        } 
+    } 
+  
+    // taking sum 
+    for (int i = 0; i < a->h; i++)  
+        for (int j = 0; j < a->w; j++) 
+            sum += get_val(temp, i, j, k);     
+  
+    ip_mat_free(temp);
+    return sum / (a->h * a->w); 
+} 
+
+ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
+{
+    ip_mat *corrupt = ip_mat_create(a->h, a->w, a->k, 0.f);
+    int i, ih, iw, ik;
+    compute_stats(a);
+    for (i = 0; i < a->h * a->w * a->k; i++)
+    {
+        iw = (i / a->k) % a->w;
+        ih = i / (a->w * a->k);
+        ik = i % a->k;
+        set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random() * amount));
+    }
+    clamp(corrupt, 0.f, 255.f);
+    return corrupt;
 }
 
 /**** PARTE 3 ****/
 
 ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
 {
-    if(a)
+    if (a)
     {
         ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
 
@@ -545,7 +593,7 @@ ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
                 for (ik = 0; ik < a->k; ik++)
                 {
                     float v_a = get_val(a, ih, iw, ik);
-                    set_val(nuova, ih+pad_h, iw+pad_w, ik, v_a);
+                    set_val(nuova, ih + pad_h, iw + pad_w, ik, v_a);
                 }
         }
         return nuova;
@@ -563,8 +611,10 @@ void clamp(ip_mat *t, float low, float high)
             for (ik = 0; ik < t->k; ik++)
             {
                 float v_a = get_val(t, ih, iw, ik);
-                if(v_a > high) v_a = high;
-                if(v_a < low) v_a = low;
+                if (v_a > high)
+                    v_a = high;
+                if (v_a < low)
+                    v_a = low;
                 set_val(t, ih, iw, ik, v_a);
             }
     }
@@ -572,7 +622,7 @@ void clamp(ip_mat *t, float low, float high)
 
 void rescale(ip_mat *t, float new_max)
 {
-    if(t)
+    if (t)
     {
         int ih, iw, ik;
         compute_stats(t);
@@ -581,14 +631,14 @@ void rescale(ip_mat *t, float new_max)
             for (iw = 0; iw < t->w; iw++)
                 for (ik = 0; ik < t->k; ik++)
                 {
-                    float v_a = (get_val(t, ih, iw, ik) - t->stat[ik]->min)/(t->stat[ik]->max - t->stat[ik]->min) * new_max;
+                    float v_a = (get_val(t, ih, iw, ik) - t->stat[ik]->min) / (t->stat[ik]->max - t->stat[ik]->min) * new_max;
                     set_val(t, ih, iw, ik, v_a);
                 }
         }
     }
 }
 
-float calculate_convolution(ip_mat *a, ip_mat *ker, int i ,int j, int k)
+float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
 {
     if (a && ker)
     {
@@ -597,7 +647,7 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i ,int j, int k)
         for (ih = 0; ih < ker->h; ih++)
         {
             for (iw = 0; iw < ker->w; iw++)
-                acc += get_val(a, ih+i, iw+j, k) * get_val(ker, ih, iw, k);
+                acc += get_val(a, ih + i, iw + j, k) * get_val(ker, ih, iw, k);
         }
         return acc;
     }
@@ -615,7 +665,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
         int ih, iw, ik;
-        
+
         for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
             for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
@@ -628,16 +678,16 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
         ip_mat_free(pad_a);
         compute_stats(f);
 
-        while(i < f->k && !found)
+        while (i < f->k && !found)
         {
-            if(f->stat[i]->max < 1)
+            if (f->stat[i]->max < 1)
             {
                 rescale(mat, 255.0f);
                 found = 1;
             }
             i++;
         }
-        
+
         return mat;
     }
     else
@@ -646,41 +696,78 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 
 ip_mat *create_average_filter(int w, int h, int k)
 {
-    ip_mat *filter = ip_mat_create(h, w, k, 1/(float)(w*h));
+    ip_mat *filter = ip_mat_create(h, w, k, 1 / (float)(w * h));
     return filter;
 }
 
-ip_mat *create_gaussian_filter(int w, int h, int k, float sigma){
+ip_mat *create_gaussian_filter(int w, int h, int k, float sigma)
+{
     int cx, cy;
     int ih, iw, ik, dx, dy;
     float val, acc;
     ip_mat *filter = ip_mat_create(h, w, k, 0);
-    ip_mat * filter1;
-    cx = (w-1)/2;
-    cy = (h-1)/2;
+    ip_mat *filter1;
+    cx = (w - 1) / 2;
+    cy = (h - 1) / 2;
     acc = 0;
-    for(ih=0; ih<w; ih++){
-        dx = ih-cx;
-        for(iw = 0; iw<h; iw++){
-            dy = iw-cy;
-            val = (1/(2*PI*sigma*sigma))* exp(-(dx*dx+dy*dy)/(2*sigma*sigma));
-            for (ik=0; ik<k; ik++){
+    for (ih = 0; ih < w; ih++)
+    {
+        dx = ih - cx;
+        for (iw = 0; iw < h; iw++)
+        {
+            dy = iw - cy;
+            val = (1 / (2 * PI * sigma * sigma)) * exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+            for (ik = 0; ik < k; ik++)
+            {
                 set_val(filter, ih, iw, ik, val);
-                acc +=val;
+                acc += val;
             }
         }
-    }   
-    filter1 = ip_mat_mul_scalar(filter, 1/acc);
+    }
+    filter1 = ip_mat_mul_scalar(filter, 1 / acc);
     ip_mat_free(filter);
     return filter1;
 }
 
 ip_mat *create_edge_filter()
 {
-    ip_mat *filter = ip_mat_create(3,3,3,-1.0f);
-    set_val(filter,1,1,0,8.0f);
-    set_val(filter,1,1,1,8.0f);
-    set_val(filter,1,1,2,8.0f);
+    ip_mat *filter = ip_mat_create(3, 3, 3, -1.0f);
+    set_val(filter, 1, 1, 0, 8.0f);
+    set_val(filter, 1, 1, 1, 8.0f);
+    set_val(filter, 1, 1, 2, 8.0f);
+    return filter;
+}
+
+
+ip_mat *create_emboss_filter()
+{
+    ip_mat *filter = ip_mat_create(3, 3, 3, 1.0f);
+    int i;
+    for(i = 0; i < 3; i++)
+    {
+        set_val(filter, 0, 0, i, -2.0f);
+        set_val(filter, 1, 0, i, -1.0f);
+        set_val(filter, 0, 1, i, -1.0f);
+        set_val(filter, 0, 2, i, 0.0f);
+        set_val(filter, 2, 0, i, 0.0f);
+        set_val(filter, 2, 2, i, 2.0f);
+    }
+    return filter;
+}
+
+
+ip_mat *create_sharpen_filter()
+{
+    ip_mat *filter = ip_mat_create(3, 3, 3, 0.0f);
+    int i;
+    for(i = 0; i < 3; i++)
+    {
+        set_val(filter, 1, 0, i, -1.0f);
+        set_val(filter, 0, 1, i, -1.0f);
+        set_val(filter, 2, 1, i, -1.0f);
+        set_val(filter, 1, 2, i, -1.0f);
+        set_val(filter, 1, 1, i, 5.0f);
+    }
     return filter;
 }
 
@@ -752,7 +839,7 @@ ip_mat *create_edge_filter()
    void clamp(ip_mat *t, float low, float high);
    */
 
-  /* FUNZIONI EXTRA 
+/* FUNZIONI EXTRA 
   *
   * ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
   * 
