@@ -11,24 +11,13 @@ int main()
 
     printf("\n TEST ip_mat_create \n");
     ip_mat *mat1;
-    h = 5;
-    w = 6;
-    k = 3;
+    h=3;
+    w=3;
+    k=1;
     val = 2;
     printf("\n Matrice A %d x %d x %d : \n", h, w, k);
     mat1 = ip_mat_create(h, w, k, val);
     ip_mat_show(mat1);
-
-    printf("\n TEST set_val \n");
-    set_val(mat1, 0, 1, 1, 2);
-    set_val(mat1, 0, 1, 2, 4);
-    set_val(mat1, 0, 0, 0, 3);
-    set_val(mat1, 3, 4, 2, 7);
-    printf("\n Matrice A modificata con set: \n");
-    ip_mat_show(mat1);
-
-    printf("\n TEST get_val \n");
-    printf("\n get val(3,4,2): %f\n", get_val(mat1, 3, 4, 2));
 
     printf("\n TEST ip_mat_init_random \n");
     ip_mat_init_random(mat1, 1, 1);

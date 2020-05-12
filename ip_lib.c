@@ -186,7 +186,7 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
             ih = i / (t->w * t->k);
 
             float random = get_normal_random();
-            float gaussian = (1 / sqrt(2 * PI * var * var)) * pow(E, -(((random - mean) * (random - mean)) / (2 * var * var)));
+            float gaussian = (1 / sqrt(2 * PI * var * var)) * exp(-(pow(random - mean, 2) / (2 * var * var)));
             set_val(t, ih, iw, ik, gaussian);
         }
     }
@@ -540,15 +540,42 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
     return gray;
 }
 
+int var(ip_mat *a, int k) 
+{ 
+    int sum = 0; 
+
+    ip_mat *temp = ip_mat_add_scalar(a, -a->stat[k]->mean);
+
+
+    for (int i = 0; i < a->h; i++) { 
+        for (int j = 0; j < a->w; j++) { 
+            set_val(temp, i, j, k, get_val(temp, i, j, k)*get_val(temp, i, j, k));
+        } 
+    } 
+  
+    // taking sum 
+    for (int i = 0; i < a->h; i++)  
+        for (int j = 0; j < a->w; j++) 
+            sum += get_val(temp, i, j, k);     
+  
+    ip_mat_free(temp);
+    return sum / (a->h * a->w); 
+} 
+
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
 {
-    ip_mat *mat_rand = ip_mat_create(a->h, a->w, a->k, 0.0f);
-    ip_mat *new = ip_mat_create(a->h, a->w, a->k, 0.0f);
-    ip_mat_init_random(mat_rand, 0.0f, 1.0f); //0,1
-    ip_mat_mul_scalar(mat_rand, amount);
-    new = ip_mat_sum(a, mat_rand);
-    ip_mat_free(mat_rand);
-    return new;
+    ip_mat *corrupt = ip_mat_create(a->h, a->w, a->k, 0.f);
+    int i, ih, iw, ik;
+    compute_stats(a);
+    for (i = 0; i < a->h * a->w * a->k; i++)
+    {
+        iw = (i / a->k) % a->w;
+        ih = i / (a->w * a->k);
+        ik = i % a->k;
+        set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random() * amount));
+    }
+    clamp(corrupt, 0.f, 255.f);
+    return corrupt;
 }
 
 /**** PARTE 3 ****/
@@ -742,11 +769,6 @@ ip_mat *create_sharpen_filter()
         set_val(filter, 1, 1, i, 5.0f);
     }
     return filter;
-}
-
-ip_mat *ip_mat_corrupt(ip_mat *a, float amout)
-{
-    return NULL;
 }
 
 /* --- Function implemented by our group --- */
