@@ -174,8 +174,9 @@ int main()
     ip_mat_show(a08);
     printf("Matrice a09 (a08 con corrupt):\n");
     ip_mat_show(a09);
-    free(a08);
-    free(a09);
+    ip_mat_free(a08);
+    ip_mat_free(a09);
+
 
     printf("\n TEST ip_mat_brighten image: \n");
     Bitmap *image = bm_load("flower.bmp");
@@ -211,11 +212,11 @@ int main()
     ip_mat_free(img);
 
     printf("\n TEST ip_mat_corrupt image: \n");
-    image = bm_load("flower.bmp");
+    image = bm_load("flower2.bmp");
     img = bitmap_to_ip_mat(image);
-    ip_mat *corruzione = ip_mat_corrupt(img, 20.0f);
+    ip_mat *corruzione = ip_mat_corrupt(img, 255.0f);
     bbmp = ip_mat_to_bitmap(corruzione);
-    bm_save(bbmp, "flower_corrotto.bmp");
+    bm_save(bbmp, "flower2_corrotto.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(corruzione);
