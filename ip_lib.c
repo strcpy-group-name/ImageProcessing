@@ -87,7 +87,7 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
     return b;
 }
 
-void compute_indexes(int i, int* ih, int* iw, int* ik, unsigned int w, unsigned int k)
+void compute_indexes(unsigned int i, unsigned int* ih, unsigned int* iw, unsigned int* ik, unsigned int w, unsigned int k)
 {
     *ik = i % k;
     *iw = (i / k) % w;
@@ -139,7 +139,7 @@ float get_normal_random(float media, float std){
 ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v)
 {
     ip_mat *mat;
-    int ih, iw, ik, i;
+    unsigned int ih, iw, ik, i;
     mat = (ip_mat *)malloc(sizeof(ip_mat));
     if (!mat)
         exit(1);
@@ -181,14 +181,15 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
 {
     if (t)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float gaussian, random;
 
         for (i = 0; i < t->w * t->h * t->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, t->w, t->k);
 
-            float random = get_normal_random(mean, var);
-            float gaussian = (1.f / sqrt(2.f * PI * var * var)) * exp(-(pow(random - mean, 2.f) / (2.f * var * var)));
+            random = get_normal_random(mean, var);
+            gaussian = (1.f / sqrt(2.f * PI * var * var)) * exp(-(pow(random - mean, 2.f) / (2.f * var * var)));
             set_val(t, ih, iw, ik, gaussian);
         }
     }
@@ -205,8 +206,9 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
     if (t)
     {
         ip_mat *subset;
-        int w, h, k;
-        int ih, iw, ik, i;
+        unsigned int w, h, k;
+        unsigned int ih, iw, ik, i;
+        float val;
         /* x comodità */
         h = row_end - row_start;
         w = col_end - col_start;
@@ -215,7 +217,7 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
         for (i = 0; i < subset->w * subset->h * subset->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, subset->w, subset->k);
-            float val = get_val(t, row_start + ih, col_start + iw, ik);
+            val = get_val(t, row_start + ih, col_start + iw, ik);
             set_val(subset, ih, iw, ik, val);
         }
         return subset;
@@ -232,14 +234,15 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
     if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
     {
         ip_mat *c;
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float sum;
 
         c = ip_mat_create(a->h, a->w, a->k, 0);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
+            sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
             set_val(c, ih, iw, ik, sum);
         }
         return c;
@@ -256,14 +259,15 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
     if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
     {
         ip_mat *c;
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float sum;
 
         c = ip_mat_create(a->h, a->w, a->k, 0);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float sum = get_val(a, ih, iw, ik) - get_val(b, ih, iw, ik);
+            sum = get_val(a, ih, iw, ik) - get_val(b, ih, iw, ik);
             set_val(c, ih, iw, ik, sum);
         }
         return c;
@@ -279,12 +283,13 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
 {
     if (a && b && a->h == b->h && a->w == b->w && a->k == b->k)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float sum;
         ip_mat *c = ip_mat_create(a->h, a->w, a->k, 0);
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
+            sum = get_val(a, ih, iw, ik) + get_val(b, ih, iw, ik);
             set_val(c, ih, iw, ik, sum / 2.f);
         }
         return c;
@@ -300,13 +305,14 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
 {
     if (a)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float sum;
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float sum = get_val(a, ih, iw, ik) * c;
+            sum = get_val(a, ih, iw, ik) * c;
             set_val(mat, ih, iw, ik, sum);
         }
         return mat;
@@ -322,13 +328,14 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
 {
     if (a)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float sum;
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float sum = get_val(a, ih, iw, ik) + c;
+            sum = get_val(a, ih, iw, ik) + c;
             set_val(mat, ih, iw, ik, sum);
         }
         return mat;
@@ -344,7 +351,7 @@ void compute_stats(ip_mat *t)
 {
     if(t)
     {
-        int ih, iw, ik;
+        unsigned int ih, iw, ik;
         for (ik = 0; ik < t->k; ik++) /*Per ogni canale calcolo e scrivo le statistiche*/
         {
             float min = get_val(t, 0, 0, ik);
@@ -380,10 +387,10 @@ ip_mat *ip_mat_copy(ip_mat *in)
 {
     if(in)
     {
-        int h = in->h;
-        int w = in->w;
-        int k = in->k;
-        int ih, iw, ik;
+        unsigned int h = in->h;
+        unsigned int w = in->w;
+        unsigned int k = in->k;
+        unsigned int ih, iw, ik;
         ip_mat *new = ip_mat_create(h, w, k, 0);
         for (ih = 0; ih < h; ih++)
         {
@@ -409,11 +416,11 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 {
     if(a && b)
     {
-        int ih, iw, ik;
-        ip_mat *new;
+        unsigned int ih, iw, ik;
+        ip_mat *new = NULL;
         if (dimensione == 0)
         {
-            int ah = a->h;
+            unsigned int ah = a->h;
             new = ip_mat_create(a->h + b->h, b->w, b->k, 0);
             for (ih = 0; ih < a->h + b->h; ih++)
             {
@@ -433,7 +440,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
         }
         else if (dimensione == 1)
         {
-            int aw = a->w;
+            unsigned int aw = a->w;
             new = ip_mat_create(b->h, aw + b->w, b->k, 0);
             for (ih = 0; ih < b->h; ih++)
             {
@@ -453,7 +460,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
         }
         else if (dimensione == 2)
         {
-            int ak = a->k;
+            unsigned int ak = a->k;
             new = ip_mat_create(b->h, b->w, ak + b->k, 0);
             for (ih = 0; ih < b->h; ih++)
             {
@@ -520,7 +527,7 @@ ip_mat *ip_mat_to_gray_scale(ip_mat *in)
 {
     if(in)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
 
         float val;
         ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
@@ -546,7 +553,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
 {
     if(in)
     {
-        int ih, iw, ik;
+        unsigned int ih, iw, ik;
         float r, g, b, val;
 
         ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
@@ -582,7 +589,7 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
 {
     if(in)
     {
-        int ih, iw, ik;
+        unsigned int ih, iw, ik;
         float r_lin, g_lin, b_lin, y_lin, y_srgb;
 
         ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
@@ -612,7 +619,7 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
     if(a)
     {
         ip_mat *corrupt = ip_mat_create(a->h, a->w, a->k, 0.f);
-        int i, ih, iw, ik;
+        unsigned int i, ih, iw, ik;
         for (i = 0; i < a->h * a->w * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
@@ -635,12 +642,12 @@ ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
     if (a)
     {
         ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
-
-        int ih, iw, ik, i;
+        float v_a;
+        unsigned int ih, iw, ik, i;
         for(i = 0; i < a->w * a->k * a->h; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            float v_a = get_val(a, ih, iw, ik);
+            v_a = get_val(a, ih, iw, ik);
             set_val(nuova, ih + pad_h, iw + pad_w, ik, v_a);
         }
         return nuova;
@@ -656,11 +663,12 @@ void clamp(ip_mat *t, float low, float high)
 {
     if (t)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float v_a;
         for (i = 0; i < t->w * t->h * t->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, t->w, t->k);
-            float v_a = get_val(t, ih, iw, ik);
+            v_a = get_val(t, ih, iw, ik);
             if (v_a > high)
                 v_a = high;
             if (v_a < low)
@@ -679,12 +687,13 @@ void rescale(ip_mat *t, float new_max)
 {
     if (t)
     {
-        int ih, iw, ik, i;
+        unsigned int ih, iw, ik, i;
+        float v_a;
         compute_stats(t);
         for (i = 0; i < t->h * t->w * t->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, t->w, t->k);
-            float v_a = (get_val(t, ih, iw, ik) - t->stat[ik].min) / (t->stat[ik].max - t->stat[ik].min) * new_max;
+            v_a = (get_val(t, ih, iw, ik) - t->stat[ik].min) / (t->stat[ik].max - t->stat[ik].min) * new_max;
             set_val(t, ih, iw, ik, v_a);
         }
     }
@@ -699,7 +708,7 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
 {
     if (a && ker)
     {
-        int ih, iw;
+        unsigned int ih, iw;
         float acc = 0.0f;
         for (ih = 0; ih < ker->h; ih++)
         {
@@ -721,17 +730,18 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     {
         int padh_amt = (f->h - 1) / 2;
         int padw_amt = (f->w - 1) / 2;
-        int i = 0, found = 0;
+        unsigned int i = 0, found = 0;
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
-        int ih, iw, ik;
+        unsigned int ih, iw, ik;
+        float val;
 
         for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
             for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
                 for (ik = 0; ik < pad_a->k; ik++)
                 {
-                    float val = calculate_convolution(pad_a, f, ih, iw, ik);
+                    val = calculate_convolution(pad_a, f, ih, iw, ik);
                     set_val(mat, ih, iw, ik, val);
                 }
         }
@@ -764,7 +774,8 @@ ip_mat *create_average_filter(int w, int h, int k)
 ip_mat *create_gaussian_filter(int w, int h, int k, float sigma)
 {
     int cx, cy;
-    int ih, iw, ik, dx, dy,i;
+    unsigned int ih, iw, ik;
+    int i, dx, dy;
     float val, acc;
     ip_mat *filter = ip_mat_create(h, w, k, 0);
     ip_mat *filter1;

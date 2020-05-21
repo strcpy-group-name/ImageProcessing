@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm *_*.bmp
+rm -f *_*.bmp
 make clean
