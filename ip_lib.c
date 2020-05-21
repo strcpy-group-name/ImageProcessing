@@ -170,11 +170,6 @@ void ip_mat_free(ip_mat *a)
         free(a->data);
         free(a);
     }
-    else
-    {
-        printf("errore ip_mat_free\n");
-        exit(1);
-    }
 }
 
 void ip_mat_init_random(ip_mat *t, float mean, float var)
