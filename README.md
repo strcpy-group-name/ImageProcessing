@@ -4,7 +4,6 @@
 Gruppo: strcpy(group, "name");
 
 TODO:
-
 - [X] PARTE 1
 	- [X] Creare matrice
 	- [X] Liberare memoria
@@ -20,21 +19,27 @@ TODO:
 	- [X] Media
 	- [X] Statistiche
 
-- [ ] PARTE 2
+- [X] PARTE 2
 	- [X] Luminosità
 	- [X] Scala di grigi
-	- [ ] Rumore
+	- [X] Rumore
 	- [X] Blending
 
-- [ ] PARTE 3
+- [X] PARTE 3
 	- [X] Convoluzione
-	- [ ] Filtri
-		- [ ] Sharpen
-		- [ ] Edge
-		- [ ] Emboss
+	- [X] Filtri
+		- [X] Sharpen
+		- [X] Edge
+		- [X] Emboss
 		- [X] Average
 		- [X] Gaussian
 	- [X] Normalizzazione
 		- [X] Rescale
 		- [X] Clamp
 		- [X] Padding
+
+## Funzioni ausiliarie
+Ogni eventuale aggiunta extra aggiungetela in fondo a `ip_lib.c` sotto `/*** FUNZIONI EXTRA ***/` e in `ip_lib.h` fate lo stesso.
+
+## Funzioni ausiliarie
+In caso di funzioni ausiliarie aggiungere `/*** FUNZIONE AUSILIARIA ***/` sopra la descrizione della funzione in `ip_lib.c`.

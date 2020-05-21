@@ -199,15 +199,12 @@ void ip_mat_show(ip_mat *t);
  * */
 void ip_mat_show_stats(ip_mat *t);
 
+/*** FUNZIONI EXTRA ***/
 
-
-/* FUNZIONI EXTRA*/
 /* scala di grigi con correzione approssimata per luminosità*/
 ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
 
 /* scala di grigi con gamma correction*/
 ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
-
-
 
 #endif /*IP_LIB_H*/

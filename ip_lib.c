@@ -87,12 +87,6 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
     return b;
 }
 
-void compute_indexes(unsigned int i, unsigned int* ih, unsigned int* iw, unsigned int* ik, unsigned int w, unsigned int k)
-{
-    *ik = i % k;
-    *iw = (i / k) % w;
-    *ih = i / (w * k);
-}
 
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
@@ -103,7 +97,7 @@ float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
     }
     else
     {
-        printf("Errore get_val!!!");
+        printf("errore get_val: a era NULL oppure indici fuori intervallo\n");
         printf("%d %d %d\n", i, j, k);
         exit(1);
     }
@@ -119,12 +113,32 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     }
     else
     {
-        printf("Errore set_val!!!\n");
+        printf("Errore set_val: a era NULL oppure indici fuori intervallo\n");
         printf("%d %d %d\n", a->h, a->w, a->k);
         printf("%d %d %d\n", i, j, k);
         exit(1);
     }
 }
+
+/*** FUNZIONE AUSILIARIA ***/
+/*
+* Calcola gli indici di una matrice tridimensionale partendo dall'indice della matrice lineare
+*/
+void compute_indexes(unsigned int i, unsigned int* ih, unsigned int* iw, unsigned int* ik, unsigned int w, unsigned int k)
+{
+    if(w != 0 && k != 0)
+    {
+        *ik = i % k;
+        *iw = (i / k) % w;
+        *ih = i / (w * k);
+    }
+    else
+    {
+        printf("errore compute_indexes: divisione per zero\n");
+        exit(1);
+    }
+}
+
 
 float get_normal_random(float media, float std){
 
@@ -190,7 +204,7 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
     }
     else
     {
-        printf("errore ip_mat_init_random\n");
+        printf("errore ip_mat_init_random: t era NULL\n");
         exit(1);
     }
 }
@@ -219,7 +233,7 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
     }
     else
     {
-        printf("errore ip_mat_subset\n");
+        printf("errore ip_mat_subset: t era NULL\n");
         exit(1);
     }
 }
@@ -244,7 +258,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_sum\n");
+        printf("errore ip_mat_sum: a || b era NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -269,7 +283,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_sub\n");
+        printf("errore ip_mat_sub: a || b era NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -291,7 +305,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_mean\n");
+        printf("errore ip_mat_mean: a || b era NULL oppure di dimensione differente\n");
         exit(1);
     }
 }
@@ -314,7 +328,7 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
     }
     else
     {
-        printf("errore ip_mat_mul_scalar\n");
+        printf("errore ip_mat_mul_scalar: a era NULL\n");
         exit(1);
     }
 }
@@ -337,7 +351,7 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
     }
     else
     {
-        printf("errore ip_mat_add_scalar\n");
+        printf("errore ip_mat_add_scalar: a era NULL\n");
         exit(1);
     }
 }
@@ -373,7 +387,7 @@ void compute_stats(ip_mat *t)
     }
     else
     {
-        printf("errore compute_stats\n");
+        printf("errore compute_stats: t era NULL\n");
         exit(1);
     }
 }
@@ -402,7 +416,7 @@ ip_mat *ip_mat_copy(ip_mat *in)
     }
     else
     {
-        printf("Errore ip_mat_copy\n");
+        printf("Errore ip_mat_copy: in era NULL\n");
         exit(1);
     }
 }
@@ -477,7 +491,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
     }
     else
     {
-        printf("errore ip_mat_concat\n");
+        printf("errore ip_mat_concat: a || b erano NULL\n");
         exit(1);
     }
 }
@@ -494,7 +508,7 @@ ip_mat *ip_mat_brighten(ip_mat *a, float bright)
     }
     else
     {
-        printf("Errore ip_mat_brighten\n");
+        printf("Errore ip_mat_brighten: a era NULL\n");
         exit(1);
     }
 }
@@ -513,7 +527,7 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
     }
     else
     {
-        printf("Errore ip_mat_blend\n");
+        printf("Errore ip_mat_blend: a || b erano NULL\n");
         exit(1);
     }
 }    
@@ -539,75 +553,11 @@ ip_mat *ip_mat_to_gray_scale(ip_mat *in)
     }
     else
     {
-        printf("errore ip_mat_to_gray_scale\n");
+        printf("errore ip_mat_to_gray_scale: in era NULL\n");
         exit(1);
     }
 }
 
-ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
-{
-    if(in)
-    {
-        unsigned int ih, iw, ik;
-        float r, g, b, val;
-
-        ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
-        for (ih = 0; ih < (in->h); ih++)
-            for (iw = 0; iw < (in->w); iw++)
-            {
-                r = get_val(in, ih, iw, 0);
-                g = get_val(in, ih, iw, 1);
-                b = get_val(in, ih, iw, 2);
-                val = 0.3f * r + 0.59f * g + 0.11f * b;
-                for (ik = 0; ik < (in->k); ik++)
-                    set_val(gray, ih, iw, ik, val);
-            }
-        return gray;
-    }
-    else
-    {
-        printf("errore ip_mat_to_gray_scale_lum_corr\n");
-        exit(1);
-    }
-    
-}
-
-float gamma_correction_exp_to_linear(float v)
-{
-    float c_srgb, c_linear;
-    c_srgb = v / 255.0f;
-    c_linear = (c_srgb <= 0.04045f) ? c_srgb / 12.92f : powf((c_srgb + 0.055f) / 1.055f, 2.4f);
-    return c_linear;
-}
-
-ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
-{
-    if(in)
-    {
-        unsigned int ih, iw, ik;
-        float r_lin, g_lin, b_lin, y_lin, y_srgb;
-
-        ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
-        for (ih = 0; ih < (in->h); ih++)
-            for (iw = 0; iw < (in->w); iw++)
-            {
-                r_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 0));
-                g_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 1));
-                b_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 2));
-                y_lin = 0.2126f * r_lin + 0.7152f * g_lin + 0.0722f * b_lin;
-                y_srgb = (y_lin <= 0.0031308f) ? 12.92f * y_lin : 1.055f * (powf(y_lin, 1.0f / 2.4f) - 0.055f);
-                for (ik = 0; ik < in->k; ik++)
-                    set_val(gray, ih, iw, ik, y_srgb * 255.0f);
-            }
-        return gray;
-    }
-    else
-    {
-        printf("errore ip_mat_to_gray_scale_gamma_corr\n");
-        exit(1);
-    }
-    
-}
 
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
 {
@@ -625,7 +575,7 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
     }
     else
     {
-        printf("errore ip_mat_corrupt\n");
+        printf("errore ip_mat_corrupt: a era NULL\n");
         exit(1);
     }
 }
@@ -649,7 +599,7 @@ ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
     }
     else
     {
-        printf("Errore ip_mat_padding\n");
+        printf("Errore ip_mat_padding: a era NULL\n");
         exit(1);
     }
 }
@@ -673,7 +623,7 @@ void clamp(ip_mat *t, float low, float high)
     }
     else
     {
-        printf("Errore clamp\n");
+        printf("Errore clamp: t era NULL\n");
         exit(1);
     }
 }
@@ -694,11 +644,15 @@ void rescale(ip_mat *t, float new_max)
     }
     else
     {
-        printf("Errore rescale\n");
+        printf("Errore rescale: t era NULL\n");
         exit(1);
     }
 }
 
+/*** FUNZIONE AUSILIARIA ***/
+/*
+* Calcola il valore della matrice in posizione (i,j,k) seguendo la regola della convoluzione
+*/
 float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
 {
     if (a && ker)
@@ -714,7 +668,7 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
     }
     else
     {
-        printf("Errore calculate_convolution\n");
+        printf("Errore calculate_convolution: a || ker erano NULL\n");
         exit(1);
     }
 }
@@ -755,7 +709,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     }
     else
     {
-        printf("Errore ip_mat_convolve\n");
+        printf("Errore ip_mat_convolve: a || f erano NULL\n");
         exit(1);
     }
 }
@@ -831,4 +785,75 @@ ip_mat *create_sharpen_filter()
         set_val(filter, 1, 1, i, 5.0f);
     }
     return filter;
+}
+
+/*** FUNZIONI EXTRA ***/
+
+
+ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
+{
+    if(in)
+    {
+        unsigned int ih, iw, ik;
+        float r, g, b, val;
+
+        ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
+        for (ih = 0; ih < (in->h); ih++)
+            for (iw = 0; iw < (in->w); iw++)
+            {
+                r = get_val(in, ih, iw, 0);
+                g = get_val(in, ih, iw, 1);
+                b = get_val(in, ih, iw, 2);
+                val = 0.3f * r + 0.59f * g + 0.11f * b;
+                for (ik = 0; ik < (in->k); ik++)
+                    set_val(gray, ih, iw, ik, val);
+            }
+        return gray;
+    }
+    else
+    {
+        printf("errore ip_mat_to_gray_scale_lum_corr: in era NULL\n");
+        exit(1);
+    }
+    
+}
+
+/*
+* Linearizza un colore
+*/
+float gamma_correction_exp_to_linear(float v)
+{
+    float c_srgb, c_linear;
+    c_srgb = v / 255.0f;
+    c_linear = (c_srgb <= 0.04045f) ? c_srgb / 12.92f : powf((c_srgb + 0.055f) / 1.055f, 2.4f);
+    return c_linear;
+}
+
+ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
+{
+    if(in)
+    {
+        unsigned int ih, iw, ik;
+        float r_lin, g_lin, b_lin, y_lin, y_srgb;
+
+        ip_mat *gray = ip_mat_create(in->h, in->w, in->k, 0.0f);
+        for (ih = 0; ih < (in->h); ih++)
+            for (iw = 0; iw < (in->w); iw++)
+            {
+                r_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 0));
+                g_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 1));
+                b_lin = gamma_correction_exp_to_linear(get_val(in, ih, iw, 2));
+                y_lin = 0.2126f * r_lin + 0.7152f * g_lin + 0.0722f * b_lin;
+                y_srgb = (y_lin <= 0.0031308f) ? 12.92f * y_lin : 1.055f * (powf(y_lin, 1.0f / 2.4f) - 0.055f);
+                for (ik = 0; ik < in->k; ik++)
+                    set_val(gray, ih, iw, ik, y_srgb * 255.0f);
+            }
+        return gray;
+    }
+    else
+    {
+        printf("errore ip_mat_to_gray_scale_gamma_corr: in era NULL\n");
+        exit(1);
+    }
+    
 }
