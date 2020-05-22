@@ -517,8 +517,8 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
 {
     if (a && b)
     {
-        ip_mat *m_a = ip_mat_mul_scalar(a, alpha / 255.0f);
-        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha) / 255.0f);
+        ip_mat *m_a = ip_mat_mul_scalar(a, alpha);
+        ip_mat *m_b = ip_mat_mul_scalar(b, (1 - alpha));
         ip_mat *mat = ip_mat_sum(m_a, m_b);
         ip_mat_free(m_a);
         ip_mat_free(m_b);
