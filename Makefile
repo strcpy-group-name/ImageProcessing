@@ -22,12 +22,10 @@ test: test.o ip_lib.o ip_lib.h bmp.h bmp.o
 test.o: test.c ip_lib.h bmp.h
 	$(CC) test.c $(CFLAGS) -c -o$@
 
-
-
 clean:
 		@rm -f test.o
 		@rm -f test
 		@rm -f bmp.o
 		@rm -f main
-		@rm -f main_iplib.o
+		@rm -f main.o
 		@rm -f ip_lib.o
