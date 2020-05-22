@@ -684,7 +684,14 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
         unsigned int ih, iw, ik;
         float val;
-
+        
+/*        for(i = 0; i < pad_a->h * pad_a->w * pad_a->k; i++)
+        {
+            compute_indexes(i, &ih, &iw, &ik, pad_a->w - (f->w - 1), pad_a->k);
+            val = calculate_convolution(pad_a, f, ih, iw, ik);
+            set_val(mat, ih, iw, ik, val);
+        }
+*/
         for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
         {
             for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
@@ -694,6 +701,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
                     set_val(mat, ih, iw, ik, val);
                 }
         }
+        /*i = 0;*/
         ip_mat_free(pad_a);
         compute_stats(f);
         while (i < f->k && !found)
