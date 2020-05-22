@@ -29,3 +29,4 @@ clean:
 		@rm -f main
 		@rm -f main.o
 		@rm -f ip_lib.o
+		@rm -f main_iplib.o

@@ -677,31 +677,20 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 {
     if (a && f)
     {
-        int padh_amt = (f->h - 1) / 2;
-        int padw_amt = (f->w - 1) / 2;
+        unsigned int padh_amt = (f->h - 1) / 2;
+        unsigned int padw_amt = (f->w - 1) / 2;
         unsigned int i = 0, found = 0;
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
         unsigned int ih, iw, ik;
         float val;
         
-/*        for(i = 0; i < pad_a->h * pad_a->w * pad_a->k; i++)
-        {
-            compute_indexes(i, &ih, &iw, &ik, pad_a->w - (f->w - 1), pad_a->k);
+        for(i=0; i < a->w * a->h * a->k; i++){
+            compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
             val = calculate_convolution(pad_a, f, ih, iw, ik);
             set_val(mat, ih, iw, ik, val);
         }
-*/
-        for (ih = 0; ih < pad_a->h - (f->h - 1); ih++)
-        {
-            for (iw = 0; iw < pad_a->w - (f->w - 1); iw++)
-                for (ik = 0; ik < pad_a->k; ik++)
-                {
-                    val = calculate_convolution(pad_a, f, ih, iw, ik);
-                    set_val(mat, ih, iw, ik, val);
-                }
-        }
-        /*i = 0;*/
+        i=0;
         ip_mat_free(pad_a);
         compute_stats(f);
         while (i < f->k && !found)
