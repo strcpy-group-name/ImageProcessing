@@ -4,13 +4,19 @@
 
 int main()
 {
+    ip_mat* no_gauss, *ker_gauss, *ker_avg, *gauss, *no_blur, *blur, *b1, *b2
+    ,*blend, *concatenazione, *img, *bright, *a08, *a09, *corruzione, *caf_nopad, *caf_pad
+    ,*g_original, *gray, *mat1, *mat2, *subset, *sum, *add1, *add2, *sub, *a, *d, *no_pad, *a01,
+    *a02, *a03, *a05, *a06, *a07, *a04, *aa, *bb, *cc, *pad, *e, *b, *c;
+    Bitmap *im1, *im2, *b3, *bbmp, *image, *caf, *g_original_bmp, *gray_bmp;
+
+
     int ih, iw, ik;
     int acc;
     int val;
     int h, w, k;
 
     printf("\n TEST ip_mat_create \n");
-    ip_mat *mat1;
     h=3;
     w=3;
     k=1;
@@ -29,7 +35,6 @@ int main()
     ip_mat_free(mat1);
 
     printf("\n TEST ip_mat_subset \n");
-    ip_mat *mat2, *subset;
 
     h = 5;
     w = 6;
@@ -52,8 +57,6 @@ int main()
     ip_mat_free(subset);
 
     printf("\n TEST ip_mat_sum: \n");
-    ip_mat *sum, *add1, *add2;
-
     h = 4;
     w = 2;
     k = 3;
@@ -74,7 +77,6 @@ int main()
     ip_mat_free(sum);
 
     printf("\n TEST ip_mat_sub: \n");
-    ip_mat *sub;
 
     sub = ip_mat_sub(add1, add2);
 
@@ -87,10 +89,10 @@ int main()
     ip_mat_free(add2);
 
     printf("\n TEST ip_mat_mean: \n");
-    ip_mat *a = ip_mat_create(2, 2, 3, 6.0f);
-    ip_mat *b = ip_mat_create(2, 2, 3, 3.0f);
+    a = ip_mat_create(2, 2, 3, 6.0f);
+    b = ip_mat_create(2, 2, 3, 3.0f);
 
-    ip_mat *c = ip_mat_mean(a, b);
+    c = ip_mat_mean(a, b);
 
     printf("\n Matrice A:\n");
     ip_mat_show(a);
@@ -104,8 +106,8 @@ int main()
     ip_mat_free(c);
 
     printf("\n TEST ip_mat_mul_scalar: \n");
-    ip_mat *d = ip_mat_create(2, 2, 3, 3.0f);
-    ip_mat *e = ip_mat_mul_scalar(d, 3.0f);
+    d = ip_mat_create(2, 2, 3, 3.0f);
+    e = ip_mat_mul_scalar(d, 3.0f);
 
     printf("\n Matrice A: \n");
     ip_mat_show(d);
@@ -116,8 +118,8 @@ int main()
     ip_mat_free(e);
 
     printf("\n TEST ip_mat_padding: \n");
-    ip_mat *no_pad = ip_mat_create(3, 3, 3, 1.0f);
-    ip_mat *pad = ip_mat_padding(no_pad, 2, 2);
+    no_pad = ip_mat_create(3, 3, 3, 1.0f);
+    pad = ip_mat_padding(no_pad, 2, 2);
 
     ip_mat_show(no_pad);
     ip_mat_show(pad);
@@ -126,10 +128,10 @@ int main()
     ip_mat_free(pad);
 
     printf("\n TEST ip_mat_sum, ip_mat_show_stats, ip_mat_compute_stats: \n");
-    ip_mat *aa = ip_mat_create(2, 2, 3, 3.0f);
-    ip_mat *bb = ip_mat_create(2, 2, 3, 6.0f);
+    aa = ip_mat_create(2, 2, 3, 3.0f);
+    bb = ip_mat_create(2, 2, 3, 6.0f);
     set_val(aa, 1, 1, 1, 300.0f);
-    ip_mat *cc = ip_mat_sum(aa, bb);
+    cc = ip_mat_sum(aa, bb);
     printf("\n\nSOMMA:\n");
     ip_mat_show(cc);
     ip_mat_show_stats(cc);
@@ -138,9 +140,9 @@ int main()
     ip_mat_free(bb);
 
     printf("\n TEST ip_mat_copy: \n");
-    ip_mat *a01 = ip_mat_create(3, 3, 3, 2.445f);
+    a01 = ip_mat_create(3, 3, 3, 2.445f);
     set_val(a01, 1, 1, 1, 300.0f);
-    ip_mat *a02 = ip_mat_copy(a01);
+    a02 = ip_mat_copy(a01);
     printf("\nmatrice a1:");
     ip_mat_show(a01);
     printf("\nmatrice a2:");
@@ -149,16 +151,16 @@ int main()
     ip_mat_free(a02);
 
     printf("\n TEST ip_mat_concat: \n");
-    ip_mat *a03 = ip_mat_create(3, 3, 3, 1.1f);
-    ip_mat *a04 = ip_mat_create(3, 3, 3, 2.2f);
+    a03 = ip_mat_create(3, 3, 3, 1.1f);
+    a04 = ip_mat_create(3, 3, 3, 2.2f);
     set_val(a04, 1, 1, 1, 4.0f);
-    ip_mat *a05 = ip_mat_concat(a03, a04, 0);
+    a05 = ip_mat_concat(a03, a04, 0);
     printf("\nmatrice a05 altezza\n");
     ip_mat_show(a05);
-    ip_mat *a06 = ip_mat_concat(a03, a04, 1);
+    a06 = ip_mat_concat(a03, a04, 1);
     printf("\nmatrice a06 largezza\n");
     ip_mat_show(a06);
-    ip_mat *a07 = ip_mat_concat(a03, a04, 2);
+    a07 = ip_mat_concat(a03, a04, 2);
     printf("\nmatrice a07 canali\n");
     ip_mat_show(a07);
     ip_mat_free(a03);
@@ -168,20 +170,21 @@ int main()
     ip_mat_free(a07);
 
     printf("\nTest ip_mat_corrupt\n");
-    ip_mat *a08 = ip_mat_create(3, 3, 3, 50.0f);
-    ip_mat *a09 = ip_mat_corrupt(a08, 10.0f);
+    a08 = ip_mat_create(3, 3, 3, 50.0f);
+    a09 = ip_mat_corrupt(a08, 10.0f);
     printf("Matrice a08:\n");
     ip_mat_show(a08);
     printf("Matrice a09 (a08 con corrupt):\n");
     ip_mat_show(a09);
-    free(a08);
-    free(a09);
+    ip_mat_free(a08);
+    ip_mat_free(a09);
+
 
     printf("\n TEST ip_mat_brighten image: \n");
-    Bitmap *image = bm_load("flower.bmp");
-    ip_mat *img = bitmap_to_ip_mat(image);
-    ip_mat *bright = ip_mat_brighten(img, 100.0f);
-    Bitmap *bbmp = ip_mat_to_bitmap(bright);
+    image = bm_load("flower.bmp");
+    img = bitmap_to_ip_mat(image);
+    bright = ip_mat_brighten(img, 100.0f);
+    bbmp = ip_mat_to_bitmap(bright);
     bm_save(bbmp, "flower_b.bmp");
     bm_free(image);
     bm_free(bbmp);
@@ -202,7 +205,7 @@ int main()
     printf("\n TEST ip_mat_concat image: \n");
     image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
-    ip_mat *concatenazione = ip_mat_concat(img, img, 1);
+    concatenazione = ip_mat_concat(img, img, 1);
     bbmp = ip_mat_to_bitmap(concatenazione);
     bm_save(bbmp, "flower_unito.bmp");
     bm_free(image);
@@ -213,21 +216,21 @@ int main()
     printf("\n TEST ip_mat_corrupt image: \n");
     image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
-    ip_mat *corruzione = ip_mat_corrupt(img, 20.0f);
+    corruzione = ip_mat_corrupt(img, 255.0f);
     bbmp = ip_mat_to_bitmap(corruzione);
-    bm_save(bbmp, "flower_corrotto.bmp");
+    bm_save(bbmp, "flower2_corrotto.bmp");
     bm_free(image);
     bm_free(bbmp);
     ip_mat_free(corruzione);
     ip_mat_free(img);
 
     printf("\n TEST ip_mat_blend image: \n");
-    Bitmap *im1 = bm_load("mongolfiere.bmp");
-    Bitmap *im2 = bm_load("flower2.bmp");
-    ip_mat *b1 = bitmap_to_ip_mat(im1);
-    ip_mat *b2 = bitmap_to_ip_mat(im2);
-    ip_mat *blend = ip_mat_blend(b1, b2, 0.5f);
-    Bitmap *b3 = ip_mat_to_bitmap(blend);
+    im1 = bm_load("mongolfiere.bmp");
+    im2 = bm_load("flower2.bmp");
+    b1 = bitmap_to_ip_mat(im1);
+    b2 = bitmap_to_ip_mat(im2);
+    blend = ip_mat_blend(b1, b2, 0.5f);
+    b3 = ip_mat_to_bitmap(blend);
     bm_save(b3, "blend.bmp");
     ip_mat_free(b1);
     ip_mat_free(b2);
@@ -237,9 +240,9 @@ int main()
     bm_free(b3);
 
     printf("\n TEST ip_mat_padding image: \n");
-    Bitmap *caf = bm_load("flower.bmp");
-    ip_mat *caf_nopad = bitmap_to_ip_mat(caf);
-    ip_mat *caf_pad = ip_mat_padding(caf_nopad, 100.0f, 100.0f);
+    caf = bm_load("flower.bmp");
+    caf_nopad = bitmap_to_ip_mat(caf);
+    caf_pad = ip_mat_padding(caf_nopad, 100.0f, 100.0f);
     bbmp = ip_mat_to_bitmap(caf_pad);
     bm_save(bbmp, "flower_padding.bmp");
     bm_free(caf);
@@ -249,22 +252,22 @@ int main()
 
     printf("\n TEST convoluzione average image: \n");
     caf = bm_load("flower.bmp");
-    ip_mat *caf_noblur = bitmap_to_ip_mat(caf);
-    ip_mat *ker_avg = create_average_filter(5, 5, 3);
-    ip_mat *caf_blur = ip_mat_convolve(caf_noblur, ker_avg);
-    bbmp = ip_mat_to_bitmap(caf_blur);
+    no_blur = bitmap_to_ip_mat(caf);
+    ker_avg = create_average_filter(5, 5, 3);
+    blur = ip_mat_convolve(no_blur, ker_avg);
+    bbmp = ip_mat_to_bitmap(blur);
     bm_save(bbmp, "flower_average.bmp");
     bm_free(caf);
     bm_free(bbmp);
-    ip_mat_free(caf_noblur);
-    ip_mat_free(caf_blur);
+    ip_mat_free(no_blur);
+    ip_mat_free(blur);
     ip_mat_free(ker_avg);
 
     printf("\nTest ip_mat_to_gray image: \n");
-    Bitmap *g_original_bmp = bm_load("flower.bmp");
-    ip_mat *g_original = bitmap_to_ip_mat(g_original_bmp);
-    ip_mat *gray = ip_mat_to_gray_scale(g_original);
-    Bitmap *gray_bmp = ip_mat_to_bitmap(gray);
+    g_original_bmp = bm_load("flower.bmp");
+    g_original = bitmap_to_ip_mat(g_original_bmp);
+    gray = ip_mat_to_gray_scale(g_original);
+    gray_bmp = ip_mat_to_bitmap(gray);
     bm_save(gray_bmp, "flower_gray.bmp");
     bm_free(g_original_bmp);
     bm_free(gray_bmp);
@@ -295,44 +298,44 @@ int main()
 
     printf("\n TEST convoluzione gaussian image: \n");
     caf = bm_load("flower.bmp");
-    ip_mat *caf_nogauss = bitmap_to_ip_mat(caf);
-    ip_mat *ker_gauss = create_gaussian_filter(3, 3, 3, 5.0f);
-    ip_mat *caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
-    clamp(caf_gauss, 0.0f, 255.0f);
-    bbmp = ip_mat_to_bitmap(caf_gauss);
+    no_gauss = bitmap_to_ip_mat(caf);
+    ker_gauss = create_gaussian_filter(3, 3, 3, 5.0f);
+    gauss = ip_mat_convolve(no_gauss, ker_gauss);
+    clamp(gauss, 0.0f, 255.0f);
+    bbmp = ip_mat_to_bitmap(gauss);
     bm_save(bbmp, "flower_gauss.bmp");
     bm_free(caf);
     bm_free(bbmp);
-    ip_mat_free(caf_nogauss);
-    ip_mat_free(caf_gauss);
+    ip_mat_free(no_gauss);
+    ip_mat_free(gauss);
     ip_mat_free(ker_gauss);
 
     printf("\n TEST convoluzione edge image: \n");
     caf = bm_load("flower.bmp");
-    caf_nogauss = bitmap_to_ip_mat(caf);
+    no_gauss = bitmap_to_ip_mat(caf);
     ker_gauss = create_edge_filter();
-    caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
-    clamp(caf_gauss, 0.0f, 255.0f);
-    bbmp = ip_mat_to_bitmap(caf_gauss);
+    gauss = ip_mat_convolve(no_gauss, ker_gauss);
+    clamp(gauss, 0.0f, 255.0f);
+    bbmp = ip_mat_to_bitmap(gauss);
     bm_save(bbmp, "flower_edge.bmp");
     bm_free(caf);
     bm_free(bbmp);
-    ip_mat_free(caf_nogauss);
-    ip_mat_free(caf_gauss);
+    ip_mat_free(no_gauss);
+    ip_mat_free(gauss);
     ip_mat_free(ker_gauss);
 
     printf("\n TEST convoluzione emboss image: \n");
     caf = bm_load("fullmoon.bmp");
-    caf_nogauss = bitmap_to_ip_mat(caf);
+    no_gauss = bitmap_to_ip_mat(caf);
     ker_gauss = create_emboss_filter();
-    caf_gauss = ip_mat_convolve(caf_nogauss, ker_gauss);
-    clamp(caf_gauss, 0.0f, 255.0f);
-    bbmp = ip_mat_to_bitmap(caf_gauss);
+    gauss = ip_mat_convolve(no_gauss, ker_gauss);
+    clamp(gauss, 0.0f, 255.0f);
+    bbmp = ip_mat_to_bitmap(gauss);
     bm_save(bbmp, "fullmoon_emboss.bmp");
     bm_free(caf);
     bm_free(bbmp);
-    ip_mat_free(caf_nogauss);
-    ip_mat_free(caf_gauss);
+    ip_mat_free(no_gauss);
+    ip_mat_free(gauss);
     ip_mat_free(ker_gauss);
 
 

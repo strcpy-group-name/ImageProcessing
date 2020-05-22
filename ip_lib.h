@@ -13,7 +13,6 @@
 #define FLT_MAX 3.402823466e+38F /* max value */
 #define FLT_MIN 1.175494351e-38F /* min positive value */
 #define PI 3.141592654
-#define E 2.71828182846
 typedef struct
 {
     float min;
@@ -26,8 +25,8 @@ typedef struct
     unsigned int w; /* <- larghezza */
     unsigned int h; /* <- altezza */
     unsigned int k; /* <- canali */
-    stats **stat;    /* <- statistiche per canale */
-    float *data;  /* <- matrice 3D di valori float, modificato da triplo a doppio x linearizzazione con 3 metodo*/
+    stats *stat;    /* <- statistiche per canale */
+    float *data;  /* <- matrice 3D di valori float, modificato x linearizzazione */
 } ip_mat;
 
 /**** PARTE 1: TIPO DI DATI ip_mat E MEMORIA ****/
@@ -182,7 +181,7 @@ void clamp(ip_mat *t, float low, float high);
 /* Genera dei numeri casuali con distribuzione Normale (versione base)
  * https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
  * */
-float get_normal_random();
+float get_normal_random(float mean, float std);
 
 /* Converte una Bitmap in una ip_mat*/
 ip_mat *bitmap_to_ip_mat(Bitmap *img);
@@ -200,15 +199,12 @@ void ip_mat_show(ip_mat *t);
  * */
 void ip_mat_show_stats(ip_mat *t);
 
+/*** FUNZIONI EXTRA ***/
 
-
-/* FUNZIONI EXTRA*/
 /* scala di grigi con correzione approssimata per luminosità*/
 ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
 
 /* scala di grigi con gamma correction*/
 ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
-
-
 
 #endif /*IP_LIB_H*/
