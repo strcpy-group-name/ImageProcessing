@@ -120,7 +120,7 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     }
 }
 
-/*** FUNZIONE AUSILIARIA ***/
+/**** FUNZIONE AUSILIARIA ***/
 /*
 * Calcola gli indici di una matrice tridimensionale partendo dall'indice della matrice lineare
 */
@@ -649,7 +649,7 @@ void rescale(ip_mat *t, float new_max)
     }
 }
 
-/*** FUNZIONE AUSILIARIA ***/
+/**** FUNZIONE AUSILIARIA ***/
 /*
 * Calcola il valore della matrice in posizione (i,j,k) seguendo la regola della convoluzione
 */
@@ -787,9 +787,11 @@ ip_mat *create_sharpen_filter()
     return filter;
 }
 
-/*** FUNZIONI EXTRA ***/
+/************************************************************/
+/*                      FUNZIONI EXTRA                      */
+/************************************************************/
 
-
+/* scala di grigi con correzione approssimata per luminosità*/
 ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
 {
     if(in)
@@ -818,6 +820,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
     
 }
 
+/**** FUNZIONE AUSILIARIA ***/
 /*
 * Linearizza un colore
 */
@@ -829,6 +832,7 @@ float gamma_correction_exp_to_linear(float v)
     return c_linear;
 }
 
+/* scala di grigi con gamma correction*/
 ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
 {
     if(in)
