@@ -657,12 +657,12 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
 {
     if (a && ker)
     {
-        unsigned int ih, iw;
+        unsigned int ih, iw, ik, idx;
         float acc = 0.0f;
-        for (ih = 0; ih < ker->h; ih++)
+        for(idx = k; idx < ker->h * ker->w * ker->k; idx+=ker->k)
         {
-            for (iw = 0; iw < ker->w; iw++)
-                acc += get_val(a, ih + i, iw + j, k) * get_val(ker, ih, iw, k);
+            compute_indexes(idx, &ih, &iw, &ik, ker->w, ker->k);
+            acc += get_val(a, ih + i, iw + j, k) * get_val(ker, ih, iw, k);
         }
         return acc;
     }

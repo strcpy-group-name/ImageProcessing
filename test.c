@@ -214,7 +214,7 @@ int main()
     ip_mat_free(img);
 
     printf("\n TEST ip_mat_corrupt image: \n");
-    image = bm_load("flower2.bmp");
+    image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
     corruzione = ip_mat_corrupt(img, 255.0f);
     bbmp = ip_mat_to_bitmap(corruzione);
