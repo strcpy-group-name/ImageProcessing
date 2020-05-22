@@ -184,6 +184,7 @@ int main()
     image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
     bright = ip_mat_brighten(img, 100.0f);
+    clamp(bright, 0.f, 255.f);
     bbmp = ip_mat_to_bitmap(bright);
     bm_save(bbmp, "flower_b.bmp");
     bm_free(image);
@@ -195,6 +196,7 @@ int main()
     image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
     bright = ip_mat_brighten(img, -100.0f);
+    clamp(bright, 0.f, 255.f);
     bbmp = ip_mat_to_bitmap(bright);
     bm_save(bbmp, "flower_d.bmp");
     bm_free(image);

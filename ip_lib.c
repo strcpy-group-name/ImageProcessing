@@ -503,7 +503,6 @@ ip_mat *ip_mat_brighten(ip_mat *a, float bright)
     if(a)
     {
         ip_mat *mat = ip_mat_add_scalar(a, bright);
-        clamp(mat, 0.f, 255.f);
         return mat;
     }
     else
