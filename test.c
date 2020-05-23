@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include "ip_lib.h"
 
 int main()
@@ -12,6 +13,7 @@ int main()
     int acc;
     int val;
     int h, w, k;
+    unsigned int i;
 
     printf("\n TEST ip_mat_create \n");
     h = 3;
@@ -201,46 +203,64 @@ int main()
     ip_mat_free(img);
 
     printf("\n TEST ip_mat_concat image: \n");
-    image = bm_load("flower.bmp");
-    img = bitmap_to_ip_mat(image);
-    concatenazione = ip_mat_concat(img, img, 1);
-    bbmp = ip_mat_to_bitmap(concatenazione);
-    bm_save(bbmp, "flower_unito.bmp");
-    bm_free(image);
-    bm_free(bbmp);
-    ip_mat_free(concatenazione);
-    ip_mat_free(img);
+    for(i = 0; i < 3; i++)
+    {
+        char* image_name = (char*)malloc(sizeof(char)*19);
+        sprintf(image_name, "flower_unito_%d.bmp", i);
+        image = bm_load("flower.bmp");
+        img = bitmap_to_ip_mat(image);
+        concatenazione = ip_mat_concat(img, img, i);
+        bbmp = ip_mat_to_bitmap(concatenazione);
+        bm_save(bbmp, image_name);
+        bm_free(image);
+        bm_free(bbmp);
+        ip_mat_free(concatenazione);
+        ip_mat_free(img);
+        free(image_name);
+    }
 
     printf("\n TEST ip_mat_corrupt image: \n");
-    image = bm_load("flower.bmp");
-    img = bitmap_to_ip_mat(image);
-    corruzione = ip_mat_corrupt(img, 255.0f);
-    bbmp = ip_mat_to_bitmap(corruzione);
-    bm_save(bbmp, "flower2_corrotto.bmp");
-    bm_free(image);
-    bm_free(bbmp);
-    ip_mat_free(corruzione);
-    ip_mat_free(img);
+    for(i = 0; i < 255; i+=25)
+    {
+        char *name = (char*)malloc(sizeof(char)*25);
+        sprintf(name, "flower_corrotto_%i.bmp", i);
+        image = bm_load("flower2.bmp");
+        img = bitmap_to_ip_mat(image);
+        corruzione = ip_mat_corrupt(img, (float)i);
+        bbmp = ip_mat_to_bitmap(corruzione);
+        bm_save(bbmp, name);
+        bm_free(image);
+        bm_free(bbmp);
+        ip_mat_free(corruzione);
+        ip_mat_free(img);
+        free(name);
+    }
 
     printf("\n TEST ip_mat_blend image: \n");
-    im1 = bm_load("mongolfiere.bmp");
-    im2 = bm_load("flower2.bmp");
-    b1 = bitmap_to_ip_mat(im1);
-    b2 = bitmap_to_ip_mat(im2);
-    blend = ip_mat_blend(b1, b2, 0.5f);
-    b3 = ip_mat_to_bitmap(blend);
-    bm_save(b3, "blend.bmp");
-    ip_mat_free(b1);
-    ip_mat_free(b2);
-    ip_mat_free(blend);
-    bm_free(im1);
-    bm_free(im2);
-    bm_free(b3);
-
+    for(i = 0; i <= 255; i+=5)
+    {
+        char *name = (char*)malloc(sizeof(char)*25);
+        sprintf(name, "flower_blend_%d.bmp", i);
+        im1 = bm_load("mongolfiere.bmp");
+        im2 = bm_load("flower2.bmp");
+        b1 = bitmap_to_ip_mat(im1);
+        b2 = bitmap_to_ip_mat(im2);
+        blend = ip_mat_blend(b1, b2, i/255.f);
+        b3 = ip_mat_to_bitmap(blend);
+        bm_save(b3, name);
+        ip_mat_free(b1);
+        ip_mat_free(b2);
+        ip_mat_free(blend);
+        bm_free(im1);
+        bm_free(im2);
+        bm_free(b3);
+        free(name);
+    }
+    
     printf("\n TEST ip_mat_padding image: \n");
     caf = bm_load("flower.bmp");
     caf_nopad = bitmap_to_ip_mat(caf);
-    caf_pad = ip_mat_padding(caf_nopad, 100.0f, 100.0f);
+    caf_pad = ip_mat_padding(caf_nopad, 0.f, 100.0f);
     bbmp = ip_mat_to_bitmap(caf_pad);
     bm_save(bbmp, "flower_padding.bmp");
     bm_free(caf);

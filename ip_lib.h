@@ -209,4 +209,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in);
 /* scala di grigi con gamma correction*/
 ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in);
 
+/*Copia w*h*k*sizeof(float) bytes dalla matrice in alla matrice di output, mantenendo le stesse dimensioni*/
+ip_mat *ip_mat_copy_mem(ip_mat *in);
+
 #endif /*IP_LIB_H*/

@@ -7,6 +7,7 @@
 #include "bmp.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <string.h>
 
 void ip_mat_show(ip_mat *t)
 {
@@ -53,7 +54,7 @@ ip_mat *bitmap_to_ip_mat(Bitmap *img)
     unsigned int h = img->h;
     unsigned int w = img->w;
 
-    ip_mat *out = ip_mat_create(h, w, 3, 0);
+    ip_mat *out = ip_mat_create(h, w, 3, 0.f);
 
     for (i = 0; i < h; i++) /* rows */
     {
@@ -245,7 +246,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
         unsigned int ih, iw, ik, i;
         float sum;
 
-        c = ip_mat_create(a->h, a->w, a->k, 0);
+        c = ip_mat_create(a->h, a->w, a->k, 0.f);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
@@ -270,7 +271,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
         unsigned int ih, iw, ik, i;
         float sum;
 
-        c = ip_mat_create(a->h, a->w, a->k, 0);
+        c = ip_mat_create(a->h, a->w, a->k, 0.f);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
@@ -293,7 +294,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
     {
         unsigned int ih, iw, ik, i;
         float sum;
-        ip_mat *c = ip_mat_create(a->h, a->w, a->k, 0);
+        ip_mat *c = ip_mat_create(a->h, a->w, a->k, 0.f);
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
@@ -315,7 +316,7 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
     {
         unsigned int ih, iw, ik, i;
         float sum;
-        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.f);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
@@ -338,7 +339,7 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
     {
         unsigned int ih, iw, ik, i;
         float sum;
-        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0);
+        ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.f);
 
         for (i = 0; i < a->w * a->h * a->k; i++)
         {
@@ -391,6 +392,9 @@ void compute_stats(ip_mat *t)
     }
 }
 
+
+
+
 ip_mat *ip_mat_copy(ip_mat *in)
 {
     if (in)
@@ -400,7 +404,7 @@ ip_mat *ip_mat_copy(ip_mat *in)
         unsigned int k = in->k;
         unsigned int ih, iw, ik, i;
         float current;
-        ip_mat *new = ip_mat_create(h, w, k, 0);
+        ip_mat *new = ip_mat_create(h, w, k, 0.f);
         for (i = 0; i < h * w * k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, in->w, in->k);
@@ -422,46 +426,57 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
     {
         unsigned int ih, iw, ik, i;
         ip_mat *new = NULL;
-        if (dimensione == 0)
+        switch(dimensione)
         {
-            new = ip_mat_create(a->h + b->h, a->w, a->k, 0);
-            for (i = 0; i < (a->h + b->h) * a->w * a->k; i++)
+            case 0:
             {
-                float current = 0;
-                compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-                if (ih < a->h)
-                    current = get_val(a, ih, iw, ik);
-                else
-                    current = get_val(b, ih - a->h, iw, ik);
-                set_val(new, ih, iw, ik, current);
+                new = ip_mat_create(a->h + b->h, a->w, a->k, 0.f);
+                for (i = 0; i < (a->h + b->h) * a->w * a->k; i++)
+                {
+                    float current = 0;
+                    compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
+                    if (ih < a->h)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih - a->h, iw, ik);
+                    set_val(new, ih, iw, ik, current);
+                }
+                break;
             }
-        }
-        else if (dimensione == 1)
-        {
-            new = ip_mat_create(b->h, a->w + b->w, b->k, 0);
-            for (i = 0; i < a->h * (a->w + b->w) * a->k; i++)
+            case 1:
             {
-                float current;
-                compute_indexes(i, &ih, &iw, &ik, a->w + b->w, a->k);
-                if (iw < a->w)
-                    current = get_val(a, ih, iw, ik);
-                else
-                    current = get_val(b, ih, iw - a->w, ik);
-                set_val(new, ih, iw, ik, current);
+                new = ip_mat_create(b->h, a->w + b->w, b->k, 0.f);
+                for (i = 0; i < a->h * (a->w + b->w) * a->k; i++)
+                {
+                    float current;
+                    compute_indexes(i, &ih, &iw, &ik, a->w + b->w, a->k);
+                    if (iw < a->w)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih, iw - a->w, ik);
+                    set_val(new, ih, iw, ik, current);
+                }
+                break;
             }
-        }
-        else if (dimensione == 2)
-        {
-            new = ip_mat_create(b->h, b->w, a->k + b->k, 0);
-            for (i = 0; i < a->h * a->w * (a->k + b->k); i++)
+            case 2:
             {
-                float current;
-                compute_indexes(i, &ih, &iw, &ik, a->w, a->k + b->k);
-                if (ik < a->k)
-                    current = get_val(a, ih, iw, ik);
-                else
-                    current = get_val(b, ih, iw, ik - a->k);
-                set_val(new, ih, iw, ik, current);
+                new = ip_mat_create(b->h, b->w, a->k + b->k, 0.f);
+                for (i = 0; i < a->h * a->w * (a->k + b->k); i++)
+                {
+                    float current;
+                    compute_indexes(i, &ih, &iw, &ik, a->w, a->k + b->k);
+                    if (ik < a->k)
+                        current = get_val(a, ih, iw, ik);
+                    else
+                        current = get_val(b, ih, iw, ik - a->k);
+                    set_val(new, ih, iw, ik, current);
+                }
+                break;
+            }
+            default: 
+            {
+                printf("errore ip_mat_concat: valore di dimensione non esistente\n");
+                exit(1);
             }
         }
         return new;
@@ -561,7 +576,7 @@ ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
 {
     if (a)
     {
-        ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
+        ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0.f);
         float v_a;
         unsigned int ih, iw, ik, i;
         for (i = 0; i < a->w * a->k * a->h; i++)
@@ -698,7 +713,7 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma)
     unsigned int ih, iw, ik;
     int i, dx, dy;
     float val, acc;
-    ip_mat *filter = ip_mat_create(h, w, k, 0);
+    ip_mat *filter = ip_mat_create(h, w, k, 0.f);
     ip_mat *filter1;
     cx = (w - 1) / 2;
     cy = (h - 1) / 2;
@@ -826,6 +841,24 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
     else
     {
         printf("errore ip_mat_to_gray_scale_gamma_corr: in era NULL\n");
+        exit(1);
+    }
+}
+
+/*
+* Copia w*h*k*sizeof(float) bytes dalla matrice in alla matrice di output, mantenendo le stesse dimensioni
+*/
+ip_mat *ip_mat_copy_mem(ip_mat *in)
+{
+    if(in)
+    {
+        ip_mat *mat = ip_mat_create(in->h, in->w, in->k, 0.f);
+        memcpy(mat->data, in->data, sizeof(float)*in->w*in->h*in->k);
+        return mat;
+    }
+    else
+    {
+        printf("Errore ip_mat_copy: in era NULL\n");
         exit(1);
     }
 }
