@@ -4,12 +4,9 @@
 
 int main()
 {
-    ip_mat* no_gauss, *ker_gauss, *ker_avg, *gauss, *no_blur, *blur, *b1, *b2
-    ,*blend, *concatenazione, *img, *bright, *a08, *a09, *corruzione, *caf_nopad, *caf_pad
-    ,*g_original, *gray, *mat1, *mat2, *subset, *sum, *add1, *add2, *sub, *a, *d, *no_pad, *a01,
-    *a02, *a03, *a05, *a06, *a07, *a04, *aa, *bb, *cc, *pad, *e, *b, *c;
+    ip_mat *no_gauss, *ker_gauss, *ker_avg, *gauss, *no_blur, *blur, *b1, *b2, *blend, *concatenazione, *img, *bright, *a08, *a09, *corruzione, *caf_nopad, *caf_pad, *g_original, *gray, *mat1, *mat2, *subset, *sum, *add1, *add2, *sub, *a, *d, *no_pad, *a01,
+        *a02, *a03, *a05, *a06, *a07, *a04, *aa, *bb, *cc, *pad, *e, *b, *c;
     Bitmap *im1, *im2, *b3, *bbmp, *image, *caf, *g_original_bmp, *gray_bmp;
-
 
     int ih, iw, ik;
     int acc;
@@ -17,9 +14,9 @@ int main()
     int h, w, k;
 
     printf("\n TEST ip_mat_create \n");
-    h=3;
-    w=3;
-    k=1;
+    h = 3;
+    w = 3;
+    k = 1;
     val = 2;
     printf("\n Matrice A %d x %d x %d : \n", h, w, k);
     mat1 = ip_mat_create(h, w, k, val);
@@ -179,7 +176,6 @@ int main()
     ip_mat_free(a08);
     ip_mat_free(a09);
 
-
     printf("\n TEST ip_mat_brighten image: \n");
     image = bm_load("flower.bmp");
     img = bitmap_to_ip_mat(image);
@@ -337,7 +333,6 @@ int main()
     ip_mat_free(no_gauss);
     ip_mat_free(gauss);
     ip_mat_free(ker_gauss);
-
 
     return 0;
 }

@@ -87,7 +87,6 @@ Bitmap *ip_mat_to_bitmap(ip_mat *t)
     return b;
 }
 
-
 float get_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k)
 {
     if (a && i < a->h && j < a->w && k < a->k)
@@ -124,9 +123,9 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
 /*
 * Calcola gli indici di una matrice tridimensionale partendo dall'indice della matrice lineare
 */
-void compute_indexes(unsigned int i, unsigned int* ih, unsigned int* iw, unsigned int* ik, unsigned int w, unsigned int k)
+void compute_indexes(unsigned int i, unsigned int *ih, unsigned int *iw, unsigned int *ik, unsigned int w, unsigned int k)
 {
-    if(w != 0 && k != 0)
+    if (w != 0 && k != 0)
     {
         *ik = i % k;
         *iw = (i / k) % w;
@@ -139,14 +138,14 @@ void compute_indexes(unsigned int i, unsigned int* ih, unsigned int* iw, unsigne
     }
 }
 
+float get_normal_random(float media, float std)
+{
 
-float get_normal_random(float media, float std){
+    float y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+    float y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+    float num = cos(2 * PI * y2) * sqrt(-2. * log(y1));
 
-    float y1 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
-    float y2 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
-    float num = cos(2*PI*y2)*sqrt(-2.*log(y1));
-
-    return media + num*std;
+    return media + num * std;
 }
 /* PARTE 1 */
 
@@ -178,7 +177,7 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v)
 
 void ip_mat_free(ip_mat *a)
 {
-    if(a)
+    if (a)
     {
         free(a->stat);
         free(a->data);
@@ -358,7 +357,7 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
 
 void compute_stats(ip_mat *t)
 {
-    if(t)
+    if (t)
     {
         unsigned int ih, iw, ik;
         for (ik = 0; ik < t->k; ik++) /*Per ogni canale calcolo e scrivo le statistiche*/
@@ -394,23 +393,19 @@ void compute_stats(ip_mat *t)
 
 ip_mat *ip_mat_copy(ip_mat *in)
 {
-    if(in)
+    if (in)
     {
         unsigned int h = in->h;
         unsigned int w = in->w;
         unsigned int k = in->k;
-        unsigned int ih, iw, ik;
+        unsigned int ih, iw, ik, i;
+        float current;
         ip_mat *new = ip_mat_create(h, w, k, 0);
-        for (ih = 0; ih < h; ih++)
+        for (i = 0; i < h * w * k; i++)
         {
-            for (iw = 0; iw < w; iw++)
-            {
-                for (ik = 0; ik < k; ik++)
-                {
-                    float current = get_val(in, ih, iw, ik);
-                    set_val(new, ih, iw, ik, current);
-                }
-            }
+            compute_indexes(i, &ih, &iw, &ik, in->w, in->k);
+            current = get_val(in, ih, iw, ik);
+            set_val(new, ih, iw, ik, current);
         }
         return new;
     }
@@ -423,68 +418,50 @@ ip_mat *ip_mat_copy(ip_mat *in)
 
 ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 {
-    if(a && b)
+    if (a && b)
     {
-        unsigned int ih, iw, ik;
+        unsigned int ih, iw, ik, i;
         ip_mat *new = NULL;
         if (dimensione == 0)
         {
-            unsigned int ah = a->h;
-            new = ip_mat_create(a->h + b->h, b->w, b->k, 0);
-            for (ih = 0; ih < a->h + b->h; ih++)
+            new = ip_mat_create(a->h + b->h, a->w, a->k, 0);
+            for (i = 0; i < (a->h + b->h) * a->w * a->k; i++)
             {
-                for (iw = 0; iw < b->w; iw++)
-                {
-                    for (ik = 0; ik < b->k; ik++)
-                    {
-                        float current = 0;
-                        if (ih < ah)
-                            current = get_val(a, ih, iw, ik);
-                        else
-                            current = get_val(b, ih - ah, iw, ik);
-                        set_val(new, ih, iw, ik, current);
-                    }
-                }
+                float current = 0;
+                compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
+                if (ih < a->h)
+                    current = get_val(a, ih, iw, ik);
+                else
+                    current = get_val(b, ih - a->h, iw, ik);
+                set_val(new, ih, iw, ik, current);
             }
         }
         else if (dimensione == 1)
         {
-            unsigned int aw = a->w;
-            new = ip_mat_create(b->h, aw + b->w, b->k, 0);
-            for (ih = 0; ih < b->h; ih++)
+            new = ip_mat_create(b->h, a->w + b->w, b->k, 0);
+            for (i = 0; i < a->h * (a->w + b->w) * a->k; i++)
             {
-                for (iw = 0; iw < aw + b->w; iw++)
-                {
-                    for (ik = 0; ik < b->k; ik++)
-                    {
-                        float current;
-                        if (iw < aw)
-                            current = get_val(a, ih, iw, ik);
-                        else
-                            current = get_val(b, ih, iw - aw, ik);
-                        set_val(new, ih, iw, ik, current);
-                    }
-                }
+                float current;
+                compute_indexes(i, &ih, &iw, &ik, a->w + b->w, a->k);
+                if (iw < a->w)
+                    current = get_val(a, ih, iw, ik);
+                else
+                    current = get_val(b, ih, iw - a->w, ik);
+                set_val(new, ih, iw, ik, current);
             }
         }
         else if (dimensione == 2)
         {
-            unsigned int ak = a->k;
-            new = ip_mat_create(b->h, b->w, ak + b->k, 0);
-            for (ih = 0; ih < b->h; ih++)
+            new = ip_mat_create(b->h, b->w, a->k + b->k, 0);
+            for (i = 0; i < a->h * a->w * (a->k + b->k); i++)
             {
-                for (iw = 0; iw < b->w; iw++)
-                {
-                    for (ik = 0; ik < ak + b->k; ik++)
-                    {
-                        float current;
-                        if (ik < ak)
-                            current = get_val(a, ih, iw, ik);
-                        else
-                            current = get_val(b, ih, iw, ik - ak);
-                        set_val(new, ih, iw, ik, current);
-                    }
-                }
+                float current;
+                compute_indexes(i, &ih, &iw, &ik, a->w, a->k + b->k);
+                if (ik < a->k)
+                    current = get_val(a, ih, iw, ik);
+                else
+                    current = get_val(b, ih, iw, ik - a->k);
+                set_val(new, ih, iw, ik, current);
             }
         }
         return new;
@@ -500,7 +477,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
-    if(a)
+    if (a)
     {
         ip_mat *mat = ip_mat_add_scalar(a, bright);
         clamp(mat, 0.f, 255.f);
@@ -530,11 +507,11 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
         printf("Errore ip_mat_blend: a || b erano NULL\n");
         exit(1);
     }
-}    
+}
 
 ip_mat *ip_mat_to_gray_scale(ip_mat *in)
 {
-    if(in)
+    if (in)
     {
         unsigned int ih, iw, ik, i;
 
@@ -558,17 +535,16 @@ ip_mat *ip_mat_to_gray_scale(ip_mat *in)
     }
 }
 
-
 ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
 {
-    if(a)
+    if (a)
     {
         ip_mat *corrupt = ip_mat_create(a->h, a->w, a->k, 0.f);
         unsigned int i, ih, iw, ik;
         for (i = 0; i < a->h * a->w * a->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
-            set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random(0, amount/2.f)));
+            set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random(0, amount / 2.f)));
         }
         clamp(corrupt, 0.f, 255.f);
         return corrupt;
@@ -589,7 +565,7 @@ ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
         ip_mat *nuova = ip_mat_create(a->h + 2 * pad_h, a->w + 2 * pad_w, a->k, 0);
         float v_a;
         unsigned int ih, iw, ik, i;
-        for(i = 0; i < a->w * a->k * a->h; i++)
+        for (i = 0; i < a->w * a->k * a->h; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
             v_a = get_val(a, ih, iw, ik);
@@ -659,7 +635,7 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
     {
         unsigned int ih, iw, ik, idx;
         float acc = 0.0f;
-        for(idx = k; idx < ker->h * ker->w * ker->k; idx+=ker->k)
+        for (idx = k; idx < ker->h * ker->w * ker->k; idx += ker->k)
         {
             compute_indexes(idx, &ih, &iw, &ik, ker->w, ker->k);
             acc += get_val(a, ih + i, iw + j, k) * get_val(ker, ih, iw, k);
@@ -731,7 +707,7 @@ ip_mat *create_gaussian_filter(int w, int h, int k, float sigma)
     cx = (w - 1) / 2;
     cy = (h - 1) / 2;
     acc = 0;
-    for(i = 0; i < w * h * k; i++)
+    for (i = 0; i < w * h * k; i++)
     {
         compute_indexes(i, &ih, &iw, &ik, w, k);
         dx = ih - cx;
@@ -754,12 +730,11 @@ ip_mat *create_edge_filter()
     return filter;
 }
 
-
 ip_mat *create_emboss_filter()
 {
     ip_mat *filter = ip_mat_create(3, 3, 3, 1.0f);
     int i;
-    for(i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
     {
         set_val(filter, 0, 0, i, -2.0f);
         set_val(filter, 1, 0, i, -1.0f);
@@ -771,12 +746,11 @@ ip_mat *create_emboss_filter()
     return filter;
 }
 
-
 ip_mat *create_sharpen_filter()
 {
     ip_mat *filter = ip_mat_create(3, 3, 3, 0.0f);
     int i;
-    for(i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
     {
         set_val(filter, 1, 0, i, -1.0f);
         set_val(filter, 0, 1, i, -1.0f);
@@ -794,7 +768,7 @@ ip_mat *create_sharpen_filter()
 /* scala di grigi con correzione approssimata per luminosità*/
 ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
 {
-    if(in)
+    if (in)
     {
         unsigned int ih, iw, ik;
         float r, g, b, val;
@@ -817,7 +791,6 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
         printf("errore ip_mat_to_gray_scale_lum_corr: in era NULL\n");
         exit(1);
     }
-    
 }
 
 /**** FUNZIONE AUSILIARIA ***/
@@ -835,7 +808,7 @@ float gamma_correction_exp_to_linear(float v)
 /* scala di grigi con gamma correction*/
 ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
 {
-    if(in)
+    if (in)
     {
         unsigned int ih, iw, ik;
         float r_lin, g_lin, b_lin, y_lin, y_srgb;
@@ -859,5 +832,4 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
         printf("errore ip_mat_to_gray_scale_gamma_corr: in era NULL\n");
         exit(1);
     }
-    
 }
