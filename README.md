@@ -73,3 +73,9 @@ Per eseguirli usare
 make main
 ./runner_<gauss|noise>.sh
 ```
+
+Per verificare eventuali memory leak
+```sh
+make debug
+valgrind -v --leak-check=full ./debug
+```
