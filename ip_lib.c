@@ -493,10 +493,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     if (a)
-    {
-        ip_mat *mat = ip_mat_add_scalar(a, bright);
-        return mat;
-    }
+        return ip_mat_add_scalar(a, bright);
     else
     {
         printf("Errore ip_mat_brighten: a era NULL\n");
@@ -560,7 +557,6 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
             set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random(0, amount / 2.f)));
         }
-        clamp(corrupt, 0.f, 255.f);
         return corrupt;
     }
     else
