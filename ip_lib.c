@@ -119,7 +119,6 @@ void set_val(ip_mat *a, unsigned int i, unsigned int j, unsigned int k, float v)
     else
     {
         printf("Errore set_val: a era NULL oppure indici fuori intervallo\n");
-        printf("%d %d %d\n", a->h, a->w, a->k);
         printf("%d %d %d\n", i, j, k);
         exit(1);
     }
@@ -161,17 +160,25 @@ ip_mat *ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v)
     unsigned int ih, iw, ik, i;
     mat = (ip_mat *)malloc(sizeof(ip_mat));
     if (!mat)
+    {
+        printf("Errore ip_mat_create: spazio non sufficiente a contenere la matrice\n");
         exit(1);
+    }
     mat->w = w;
     mat->h = h;
     mat->k = k;
     mat->stat = (stats *)malloc(sizeof(stats) * k);
     if (!mat->stat)
+    {
+        printf("Errore ip_mat_create: spazio non sufficiente per contenere le statistiche\n");
         exit(1);
+    }
     mat->data = (float *)malloc(sizeof(float) * h * w * k);
     if (!mat->data)
+    {
+        printf("Errore ip_mat_create: spazio non sufficiente a contenere i dati\n");
         exit(1);
-
+    }
     for (i = 0; i < w * h * k; i++)
     {
         compute_indexes(i, &ih, &iw, &ik, w, k);
@@ -209,7 +216,7 @@ void ip_mat_init_random(ip_mat *t, float mean, float var)
     }
     else
     {
-        printf("errore ip_mat_init_random: t era NULL\n");
+        printf("Errore ip_mat_init_random: t era NULL\n");
         exit(1);
     }
 }
@@ -238,7 +245,7 @@ ip_mat *ip_mat_subset(ip_mat *t, unsigned int row_start, unsigned int row_end, u
     }
     else
     {
-        printf("errore ip_mat_subset: t era NULL\n");
+        printf("Errore ip_mat_subset: t era NULL\n");
         exit(1);
     }
 }
@@ -263,7 +270,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_sum: a || b era NULL oppure di dimensione differente\\n");
+        printf("Errore ip_mat_sum: a || b era NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -288,7 +295,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_sub: a || b era NULL oppure di dimensione differente\\n");
+        printf("Errore ip_mat_sub: a || b era NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -310,7 +317,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("errore ip_mat_mean: a || b era NULL oppure di dimensione differente\n");
+        printf("Errore ip_mat_mean: a || b era NULL oppure di dimensione differente\n");
         exit(1);
     }
 }
@@ -333,7 +340,7 @@ ip_mat *ip_mat_mul_scalar(ip_mat *a, float c)
     }
     else
     {
-        printf("errore ip_mat_mul_scalar: a era NULL\n");
+        printf("Errore ip_mat_mul_scalar: a era NULL\n");
         exit(1);
     }
 }
@@ -356,7 +363,7 @@ ip_mat *ip_mat_add_scalar(ip_mat *a, float c)
     }
     else
     {
-        printf("errore ip_mat_add_scalar: a era NULL\n");
+        printf("Errore ip_mat_add_scalar: a era NULL\n");
         exit(1);
     }
 }
@@ -371,7 +378,6 @@ void compute_stats(ip_mat *t)
             float min = get_val(t, 0, 0, ik);
             float max = get_val(t, 0, 0, ik);
             float tot = 0.f;
-            int nElem = 0;
             for (ih = 0; ih < t->h; ih++)
             {
                 for (iw = 0; iw < t->w; iw++)
@@ -382,7 +388,6 @@ void compute_stats(ip_mat *t)
                     if (current > max)
                         max = current;
                     tot += current;
-                    nElem++;
                 }
             }
             t->stat[ik].max = max;
@@ -392,7 +397,7 @@ void compute_stats(ip_mat *t)
     }
     else
     {
-        printf("errore compute_stats: t era NULL\n");
+        printf("Errore compute_stats: t era NULL\n");
         exit(1);
     }
 }
@@ -480,7 +485,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
             }
             default: 
             {
-                printf("errore ip_mat_concat: valore di dimensione non esistente\n");
+                printf("Errore ip_mat_concat: valore di dimensione non esistente\n");
                 exit(1);
             }
         }
@@ -488,7 +493,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
     }
     else
     {
-        printf("errore ip_mat_concat: a || b erano NULL\n");
+        printf("Errore ip_mat_concat: a || b erano NULL\n");
         exit(1);
     }
 }
@@ -546,7 +551,7 @@ ip_mat *ip_mat_to_gray_scale(ip_mat *in)
     }
     else
     {
-        printf("errore ip_mat_to_gray_scale: in era NULL\n");
+        printf("Errore ip_mat_to_gray_scale: in era NULL\n");
         exit(1);
     }
 }
@@ -566,7 +571,7 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
     }
     else
     {
-        printf("errore ip_mat_corrupt: a era NULL\n");
+        printf("Errore ip_mat_corrupt: a era NULL\n");
         exit(1);
     }
 }
@@ -629,7 +634,7 @@ void rescale(ip_mat *t, float new_max)
         for (i = 0; i < t->h * t->w * t->k; i++)
         {
             compute_indexes(i, &ih, &iw, &ik, t->w, t->k);
-            v_a = (get_val(t, ih, iw, ik) - t->stat[ik].min) / (t->stat[ik].max - t->stat[ik].min) * new_max;
+            v_a = ((get_val(t, ih, iw, ik) - t->stat[ik].min) / (t->stat[ik].max - t->stat[ik].min)) * new_max;
             set_val(t, ih, iw, ik, v_a);
         }
     }
@@ -670,7 +675,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     {
         unsigned int padh_amt = (f->h - 1) / 2;
         unsigned int padw_amt = (f->w - 1) / 2;
-        unsigned int i = 0, found = 0;
+        unsigned int i = 0;
         ip_mat *pad_a = ip_mat_padding(a, padh_amt, padw_amt);
         ip_mat *mat = ip_mat_create(a->h, a->w, a->k, 0.0f);
         unsigned int ih, iw, ik;
@@ -683,16 +688,6 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
         }
         i=0;
         ip_mat_free(pad_a);
-        compute_stats(f);
-        while (i < f->k && !found)
-        {
-            if (f->stat[i].max < 1)
-            {
-                rescale(mat, 255.0f);
-                found = 1;
-            }
-            i++;
-        }
         return mat;
     }
     else
@@ -800,7 +795,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
     }
     else
     {
-        printf("errore ip_mat_to_gray_scale_lum_corr: in era NULL\n");
+        printf("Errore ip_mat_to_gray_scale_lum_corr: in era NULL\n");
         exit(1);
     }
 }
@@ -841,7 +836,7 @@ ip_mat *ip_mat_to_gray_scale_gamma_corr(ip_mat *in)
     }
     else
     {
-        printf("errore ip_mat_to_gray_scale_gamma_corr: in era NULL\n");
+        printf("Errore ip_mat_to_gray_scale_gamma_corr: in era NULL\n");
         exit(1);
     }
 }
