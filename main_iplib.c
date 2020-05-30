@@ -12,7 +12,7 @@ void show_help(){
     printf("*** Image Processing Toolbox ***\n");
     printf("\targ 1: input file name (img1) \n");
     printf("\targ 2: input file name (img2) \n");
-    printf("\targ 3: operazione da effettuare (corrupt, gray, brighten, blend, sharp, edge, emboss, avg, gauss) \n");
+    printf("\targ 3: operazione da effettuare (corrupt, gray, brighten, blend, sharp, edge, emboss, avg, gauss, subset) \n");
     printf("\targ 4: output file name\n");
     printf("\targ 5: Se 1 concatena la/le immagini di input con quella di output\n");
     printf("\targ 6: Diversi significati in funzione dell'operazione (default 3):\n"
@@ -37,6 +37,11 @@ int main (int argc, char * argv[]) {
 
     int k_size = 3; /* kernel size */
     float sigma = 1.; /* sigma del kernel gaussiano */
+
+    unsigned int r_s = 0;
+    unsigned int r_e = 0;
+    unsigned int c_s = 0;
+    unsigned int c_e = 0;
 
     /* variabili di appoggio per le computazioni */
     Bitmap * b = NULL, *c = NULL, *b2 = NULL;
@@ -70,6 +75,14 @@ int main (int argc, char * argv[]) {
 
     if(argc>7){
         sigma = atof(argv[7]);
+    }
+
+    if(argc>10)
+    {
+        r_s = atoi(argv[8]);
+        r_e = atoi(argv[9]);
+        c_s = atoi(argv[10]);
+        c_e = atoi(argv[11]);
     }
 
     b = bm_load(fn_in_1);  /* leggi il file di input */
@@ -116,8 +129,13 @@ int main (int argc, char * argv[]) {
     } else if (strcmp(operation, "gauss") == 0) {
         filter = create_gaussian_filter(k_size, k_size, 3, sigma);
         img = ip_mat_convolve(input_img, filter);
+        rescale(img, 255.f);
         clamp(img,0,255);
-    } else {
+    }
+    else if (strcmp(operation, "subset") == 0){
+        img = ip_mat_subset(input_img, r_s, r_e, c_s, c_e);
+    }
+    else {
         printf("The required operation doesn't exists\n");
         exit(1);
     }
@@ -133,7 +151,10 @@ int main (int argc, char * argv[]) {
             temp = img_b;
             bm_free(c);
         }else{
-            temp = ip_mat_concat(input_img, img, 1); /* metti le due immagini vicine */
+            if(input_img->h == img->h)
+                temp = ip_mat_concat(input_img, img, 1); /* metti le due immagini vicine */
+            else
+                temp = ip_mat_concat(input_img, img, 0);
         }
         ip_mat_free(img);  /* libera la memoria da img */
         img = temp;
