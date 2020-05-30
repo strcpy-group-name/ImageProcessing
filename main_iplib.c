@@ -129,7 +129,6 @@ int main (int argc, char * argv[]) {
     } else if (strcmp(operation, "gauss") == 0) {
         filter = create_gaussian_filter(k_size, k_size, 3, sigma);
         img = ip_mat_convolve(input_img, filter);
-        rescale(img, 255.f);
         clamp(img,0,255);
     }
     else if (strcmp(operation, "subset") == 0){

@@ -723,6 +723,7 @@ ip_mat *create_gaussian_filter(unsigned int w, unsigned int h, unsigned int k, f
         set_val(filter, ih, iw, ik, val);
         acc += val;
     }
+    acc /= 3;
     filter1 = ip_mat_mul_scalar(filter, 1 / acc);
     ip_mat_free(filter);
     return filter1;
