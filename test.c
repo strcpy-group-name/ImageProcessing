@@ -227,6 +227,7 @@ int main()
         image = bm_load("flower2.bmp");
         img = bitmap_to_ip_mat(image);
         corruzione = ip_mat_corrupt(img, (float)i);
+        clamp(corruzione, 0.f, 255.f);
         bbmp = ip_mat_to_bitmap(corruzione);
         bm_save(bbmp, name);
         bm_free(image);

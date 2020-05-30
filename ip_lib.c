@@ -1,4 +1,9 @@
 /*
+ID: 14
+Gruppo: Cristian Nicolae Lupascu 880140, Marco Biondo 879994, Zanella Veronica 826585
+*/
+
+/*
    Created by Sebastiano Vascon on 23/03/20.
    */
 
@@ -493,10 +498,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
 ip_mat *ip_mat_brighten(ip_mat *a, float bright)
 {
     if (a)
-    {
-        ip_mat *mat = ip_mat_add_scalar(a, bright);
-        return mat;
-    }
+        return ip_mat_add_scalar(a, bright);
     else
     {
         printf("Errore ip_mat_brighten: a era NULL\n");
@@ -560,7 +562,6 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
             compute_indexes(i, &ih, &iw, &ik, a->w, a->k);
             set_val(corrupt, ih, iw, ik, get_val(a, ih, iw, ik) + (get_normal_random(0, amount / 2.f)));
         }
-        clamp(corrupt, 0.f, 255.f);
         return corrupt;
     }
     else
@@ -572,7 +573,7 @@ ip_mat *ip_mat_corrupt(ip_mat *a, float amount)
 
 /**** PARTE 3 ****/
 
-ip_mat *ip_mat_padding(ip_mat *a, int pad_h, int pad_w)
+ip_mat *ip_mat_padding(ip_mat *a, unsigned int pad_h, unsigned int pad_w)
 {
     if (a)
     {
@@ -701,17 +702,17 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     }
 }
 
-ip_mat *create_average_filter(int w, int h, int k)
+ip_mat *create_average_filter(unsigned int w, unsigned int h, unsigned int k)
 {
     ip_mat *filter = ip_mat_create(h, w, k, 1 / (float)(w * h));
     return filter;
 }
 
-ip_mat *create_gaussian_filter(int w, int h, int k, float sigma)
+ip_mat *create_gaussian_filter(unsigned int w, unsigned int h, unsigned int k, float sigma)
 {
     int cx, cy;
-    unsigned int ih, iw, ik;
-    int i, dx, dy;
+    unsigned int ih, iw, ik, i;
+    int dx, dy;
     float val, acc;
     ip_mat *filter = ip_mat_create(h, w, k, 0.f);
     ip_mat *filter1;
