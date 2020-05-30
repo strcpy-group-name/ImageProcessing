@@ -2,3 +2,5 @@
 *.out
 *.bmp
 .github/
+*.bmp
+.sh
