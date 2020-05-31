@@ -270,7 +270,7 @@ ip_mat *ip_mat_sum(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("Errore ip_mat_sum: a || b era NULL oppure di dimensione differente\\n");
+        printf("Errore ip_mat_sum: a o b erano NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -295,7 +295,7 @@ ip_mat *ip_mat_sub(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("Errore ip_mat_sub: a || b era NULL oppure di dimensione differente\\n");
+        printf("Errore ip_mat_sub: a o b erano NULL oppure di dimensione differente\\n");
         exit(1);
     }
 }
@@ -317,7 +317,7 @@ ip_mat *ip_mat_mean(ip_mat *a, ip_mat *b)
     }
     else
     {
-        printf("Errore ip_mat_mean: a || b era NULL oppure di dimensione differente\n");
+        printf("Errore ip_mat_mean: a o b erano NULL oppure di dimensione differente\n");
         exit(1);
     }
 }
@@ -401,9 +401,6 @@ void compute_stats(ip_mat *t)
         exit(1);
     }
 }
-
-
-
 
 ip_mat *ip_mat_copy(ip_mat *in)
 {
@@ -493,7 +490,7 @@ ip_mat *ip_mat_concat(ip_mat *a, ip_mat *b, int dimensione)
     }
     else
     {
-        printf("Errore ip_mat_concat: a || b erano NULL\n");
+        printf("Errore ip_mat_concat: a o b erano NULL\n");
         exit(1);
     }
 }
@@ -520,12 +517,11 @@ ip_mat *ip_mat_blend(ip_mat *a, ip_mat *b, float alpha)
         ip_mat *mat = ip_mat_sum(m_a, m_b);
         ip_mat_free(m_a);
         ip_mat_free(m_b);
-        rescale(mat, 255.0f);
         return mat;
     }
     else
     {
-        printf("Errore ip_mat_blend: a || b erano NULL\n");
+        printf("Errore ip_mat_blend: a o b erano NULL\n");
         exit(1);
     }
 }
@@ -651,7 +647,7 @@ void rescale(ip_mat *t, float new_max)
 */
 float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
 {
-    if (a && ker)
+    if (a && ker && a->k == ker->k)
     {
         unsigned int ih, iw, ik, idx;
         float acc = 0.0f;
@@ -664,14 +660,14 @@ float calculate_convolution(ip_mat *a, ip_mat *ker, int i, int j, int k)
     }
     else
     {
-        printf("Errore calculate_convolution: a || ker erano NULL\n");
+        printf("Errore calculate_convolution: a o ker erano NULL oppure il numero di canali non era lo stesso\n");
         exit(1);
     }
 }
 
 ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
 {
-    if (a && f)
+    if (a && f && a->k == f->k)
     {
         unsigned int padh_amt = (f->h - 1) / 2;
         unsigned int padw_amt = (f->w - 1) / 2;
@@ -692,7 +688,7 @@ ip_mat *ip_mat_convolve(ip_mat *a, ip_mat *f)
     }
     else
     {
-        printf("Errore ip_mat_convolve: a || f erano NULL\n");
+        printf("Errore ip_mat_convolve: a o f erano NULL oppure il numero di canali non era lo stesso\n");
         exit(1);
     }
 }

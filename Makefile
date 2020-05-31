@@ -1,7 +1,6 @@
 CC=gcc
 CFLAGS= -Wall --ansi --pedantic -lm -g3 -O3 -fsanitize=address -fsanitize=undefined -std=gnu89 -Wextra
 LIBFLAGS= -Wall -lm
-DBGFLAGS= -O1 -g -Wall -lm
 
 main_iplib: main_iplib.o ip_lib.o ip_lib.h bmp.o bmp.h
 	$(CC) main_iplib.o ip_lib.o bmp.o $(CFLAGS) -o$@
