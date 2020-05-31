@@ -788,7 +788,7 @@ ip_mat *ip_mat_to_gray_scale_lum_corr(ip_mat *in)
                 r = get_val(in, ih, iw, 0);
                 g = get_val(in, ih, iw, 1);
                 b = get_val(in, ih, iw, 2);
-                val = 0.3f * r + 0.59f * g + 0.11f * b;
+                val = 0.299f * r + 0.587f * g + 0.114f * b;
                 for (ik = 0; ik < (in->k); ik++)
                     set_val(gray, ih, iw, ik, val);
             }
